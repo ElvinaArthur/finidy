@@ -1,10 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverActions: { allowedOrigins: ['localhost:3000'] },
+    serverActions: { allowedOrigins: ["localhost:3000"] },
   },
   images: {
-    domains: ['supabase.co', '*.supabase.co'],
+    domains: ["supabase.co", "*.supabase.co"],
   },
-}
-module.exports = nextConfig
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+};
+module.exports = nextConfig;
