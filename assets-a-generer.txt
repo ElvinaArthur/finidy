@@ -1,0 +1,247 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║       FINIDY Research Center — Assets visuels à générer / fournir          ║
+║  Format recommandé : JPG 80%, sRGB. Dimensions indiquées par catégorie.    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Tous les chemins sont relatifs à : public/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ MAGAZINE — uploads/magazine/   (1200×675 px, ratio 16:9)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+magazine-pauvrete-madagascar.jpg
+  → Photographie documentaire. Vue aérienne de quartier populaire d'Antananarivo
+    (Analakely ou Isotry) au lever du soleil, toits de tôle rouillée, marchands
+    de rue. Palette chaleureuse, tons ocre et orange. Aucun visage identifiable.
+    Style photojournalisme — pas d'illustration graphique.
+
+magazine-famadihana-reseaux.jpg
+  → Scène de famadihana dans les hautes terres malgaches. Groupe de personnes
+    portant un lamba mena (tissu de soie rouge/blanc), atmosphère festive.
+    Un téléphone visible dans la scène symbolise la modernité. Lumière naturelle
+    extérieure. Pas de visages nettement identifiables.
+
+magazine-education-fracture.jpg
+  → Classe de primaire surchargée (60+ élèves) dans une école publique malgache.
+    Bambins en uniforme blanc-rouge assis serrés sur des bancs. Tableau noir,
+    murs défraîchis. Contraster avec une seconde école propre et vide en arrière-plan
+    flou. Symbolise l'inégalité scolaire.
+
+magazine-fady-tabous.jpg
+  → Illustration conceptuelle : symboles malgaches (feuilles de fougère, pierres
+    rituelles, corne de zébu) disposés sur un tissu lambamena. Fond sombre, éclairage
+    chaud directionnel. Atmosphère mystérieuse et respectueuse. Pas de personne.
+
+magazine-pentecotisme.jpg
+  → Extérieur d'une petite église pentecôtiste colorée dans un quartier urbain
+    malgache. Inscription peinte sur le mur "Église de la Grâce" ou similaire
+    en malgache. Groupe de fidèles en sortant, vêtements du dimanche. Lumière vive.
+
+magazine-deforestation.jpg
+  → Vue aérienne ou depuis une colline montrant la frontière nette entre forêt
+    verte dense et terrain aride rouge-orangé (latérite) à Madagascar. Pas de
+    personnes. Image choc sur la déforestation. Lumière de fin de journée.
+
+magazine-feminisme-mada.jpg
+  → Portrait de groupe de femmes malgaches debout, regard caméra, expressions
+    déterminées. Tenues variées (traditionnelle + moderne). Arrière-plan neutre
+    ou mur coloré. Style portrait éditorial. Visages floutés ou de dos si
+    consentement non disponible — ou illustration vectorielle à la place.
+
+magazine-economie-informelle.jpg
+  → Marché de rue animé à Antananarivo, vendeurs informels avec étals colorés.
+    Légumes, fruits, marchandises diverses. Mouvement, vie, couleur. Heure de
+    pointe (matin). Style photojournalisme documentaire.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ ENTRETIENS / PODCASTS — uploads/entretiens/   (1200×675 px, ratio 16:9)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+podcast-rakotomalala.jpg
+  → Portrait professionnel d'un homme malgache d'une quarantaine d'années,
+    l'air réfléchi, micro devant lui ou casque audio. Fond uni gris clair ou
+    bibliothèque floue. Style portrait podcast/radio.
+
+podcast-razafy.jpg
+  → Portrait professionnel d'une femme malgache d'une trentaine d'années,
+    tenue professionnelle, micro ou carnet de notes visibles. Fond neutre.
+    Expression intellectuelle et engagée.
+
+podcast-rakotondrabe.jpg
+  → Portrait professionnel d'une femme malgache, cadre naturel en arrière-plan
+    (forêt floutée ou terrain), tenue semi-professionnelle. Regard direct caméra.
+
+video-intro-sociologie.jpg
+  → Thumbnail YouTube. Fond sombre avec titre "Introduction à la Sociologie"
+    en texte bold. Icônes de concepts sociologiques (graphes, réseau, personnes
+    reliées). Palette couleurs Nihary (or #E8A020 sur fond brun foncé).
+    Format 1280×720 px.
+
+video-democratie-afrique.jpg
+  → Thumbnail YouTube. Carte de l'Afrique stylisée avec des points colorés
+    sur les pays (vert = démocratie, rouge = autoritarisme). Titre "Démocratie
+    en Afrique". Style infographique. Palette FINIDY Research Center.
+
+video-economie-malgache.jpg
+  → Thumbnail YouTube. Graphique de croissance stylisé, silhouette de la carte
+    de Madagascar. Titre "Économie Malgache". Palette FINIDY Research Center. Fond sombre.
+
+texte-ramanantsoa-education.jpg
+  → Portrait d'une femme malgache devant un tableau noir ou une bibliothèque.
+    Expression concentrée. Style portrait académique. Fond institutionnel.
+
+texte-rakotondrabe-foret.jpg
+  → Portrait en extérieur, forêt tropicale malgache en arrière-plan flou.
+    Femme malgache regardant vers la forêt, de profil ou trois-quarts.
+    Lumière naturelle filtrée.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ COUVERTURES DE LIVRES — uploads/couvertures/   (600×900 px, ratio 2:3)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+NOTE GÉNÉRALE COUVERTURES : Style sobre et académique. Fond uni ou texture
+légère. Titre en police serif (Playfair Display ou similaire). Couleurs de la
+charte FINIDY Research Center (or #E8A020, brun foncé #3D2008, crème #FEFAF3). Auteur en bas.
+Collection en haut. Logo FINIDY Éditions en bas.
+
+livre-sociologie-travail-mada.jpg
+  → Couverture sobre. Photo de fond : marché de rue antananarivien, flou artistique.
+    Titre "Sociologie du travail à Madagascar" en blanc sur fond brun semi-transparent.
+    Collection "Sciences de la société" en doré.
+
+livre-menalamba-histoire.jpg
+  → Couverture sobre. Image de fond : illustration ou carte ancienne de Madagascar
+    en sépia. Titre "Les Menalamba" en grand. Sous-titre en plus petit.
+    Style archives historiques.
+
+livre-capabilites-developpement.jpg
+  → Couverture abstraite. Graphique en courbes stylisé, palette dorée et crème.
+    Titre sobre. Aspect économique/académique sans photo.
+
+livre-dina-gouvernance.jpg
+  → Couverture. Fond texture de lambamena (tissu de soie malgache) rouge et blanc.
+    Titre "Dina" en grand caractères, sobre.
+
+livre-madagascar-politique.jpg
+  → Couverture. Fond : bâtiment gouvernemental malgache (palais d'Ambohitsorohitra)
+    en photographie noir et blanc. Titre "Madagascar Politique" en blanc.
+
+livre-apprendre-malgache.jpg
+  → Couverture. Fond : tableau noir avec lettres de l'alphabet malgache.
+    Mains d'enfant tenant un crayon, floues. Style éducatif sobre.
+
+livre-femmes-pouvoir-mada.jpg
+  → Couverture. Silhouette ou portrait flou d'une femme en tenue traditionnelle
+    malgache, regard au loin. Tons chauds. Titre "Femmes et Pouvoir" en grand.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ COLLOQUES (BANNERS) — uploads/colloques/   (1600×900 px, ratio 16:9)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+colloque-shs-ocean-indien-2025.jpg
+  → Bannière événementielle. Fond : vue de l'Université d'Antananarivo ou
+    vue panoramique des hautes terres malgaches au coucher de soleil.
+    Titre "5e Colloque International SHS Océan Indien" en overlay,
+    palette Nihary. Logos partenaires en bas (espaces réservés).
+
+colloque-education-bilingue-2026.jpg
+  → Bannière événementielle. Fond : vue de l'Île Maurice ou plage tropicale
+    institutionnelle. Titre "Colloque Éducation Bilingue" en overlay sobre.
+    Tons bleu-turquoise et or.
+
+colloque-shs-ocean-indien-2024.jpg
+  → Bannière archivée. Même style que 2025 mais légèrement désaturée/
+    grisée pour signaler l'aspect archivé. "ARCHIVÉ 2024" en watermark subtil.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ COURS (THUMBNAILS) — uploads/cours/   (1280×720 px, ratio 16:9)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+NOTE GÉNÉRALE COURS : Style thumbnail MOOC/Coursera. Fond coloré ou image
+de fond floue. Titre lisible en grands caractères. Icône de discipline en haut
+à droite. Badge "GRATUIT" en vert en haut à gauche.
+
+cours-intro-sociologie.jpg
+  → Fond : réseau de nœuds et connexions stylisé (graphe social).
+    Palette or/brun Nihary. Titre "Introduction à la Sociologie".
+    Icône silhouettes humaines interconnectées.
+
+cours-histoire-madagascar.jpg
+  → Fond : carte ancienne de Madagascar ou illustration style "old map".
+    Tons sépia et or. Titre "Histoire de Madagascar". Icône parchemin/livre.
+
+cours-methodes-recherche.jpg
+  → Fond : loupe sur feuille de données, graphiques abstraits.
+    Palette sobre bleu-or. Titre "Méthodes de Recherche en Sciences Sociales".
+    Icône microscope ou loupe.
+
+cours-gouvernance-afrique.jpg
+  → Fond : carte de l'Afrique stylisée, points lumineux sur les capitales.
+    Palette bleu nuit et or. Titre "Gouvernance et Institutions Politiques".
+    Icône parlement/dôme.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ AVATARS AUTEURS — uploads/avatars/   (400×400 px, carré)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+avatar-rakotomalala.jpg
+  → Portrait professionnel homme malgache ~40 ans. Fond neutre. Tenue professionnelle
+    (chemise ou veste). Expression sérieuse et ouverte.
+
+avatar-razafy.jpg
+  → Portrait professionnel femme malgache ~35 ans. Fond neutre ou bibliothèque.
+    Tenue professionnelle. Sourire modéré.
+
+avatar-andriantsoa.jpg
+  → Portrait professionnel homme malgache ~45 ans. Fond bureau/extérieur.
+    Tenue décontractée-professionnelle.
+
+avatar-rakotondrabe.jpg
+  → Portrait professionnel femme malgache ~38 ans. Fond naturel ou neutre.
+    Tenue de terrain ou professionnelle.
+
+avatar-ramaroson.jpg
+  → Portrait professionnel homme malgache ~50 ans. Fond institutionnel.
+    Tenue formelle (veste).
+
+avatar-ramanantsoa.jpg
+  → Portrait professionnel femme malgache ~33 ans. Fond bibliothèque ou
+    tableau noir. Tenue professionnelle.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ FICHIERS PDF (simulés — créer des PDFs vides ou avec une page de garde)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+uploads/extraits/extrait-sociologie-travail.pdf       → Extrait livre (pages 1-15)
+uploads/extraits/extrait-menalamba.pdf                → Extrait livre (pages 1-12)
+uploads/extraits/extrait-dina.pdf                     → Extrait livre (pages 1-10)
+uploads/extraits/extrait-apprendre-malgache.pdf       → Extrait livre (pages 1-8)
+uploads/colloques/programme-shs-oi-2024.pdf           → Programme du colloque 2024
+uploads/colloques/actes-shs-oi-2024.pdf               → Actes complets colloque 2024
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ OUTILS RECOMMANDÉS POUR GÉNÉRER CES ASSETS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Images (IA générative) :
+  • Midjourney v6       → portraits, couvertures, bannières
+  • Adobe Firefly       → conforme droits, bon pour usage commercial
+  • DALL·E 3 (ChatGPT)  → thumbnails, couvertures abstraites
+  • Stable Diffusion    → toutes catégories, open-source
+
+Couvertures de livres :
+  • Canva Pro           → templates livres académiques
+  • Adobe InDesign      → production professionnelle
+
+Thumbnails YouTube/Cours :
+  • Canva               → templates MOOC, facile et rapide
+
+PDFs extraits :
+  • Générer avec Canva ou Word, exporter en PDF
+  • Ou utiliser des PDFs de démonstration Creative Commons
+
+Photos documentaires (libres de droits) :
+  • Unsplash.com        → chercher "Madagascar", "Africa market", "classroom"
+  • Pexels.com          → idem
+  • Wikimedia Commons   → photos sous licence libre
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

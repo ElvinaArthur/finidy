@@ -1,0 +1,386 @@
+// Prisma 7 — l'URL de connexion est définie dans prisma.config.ts,
+// mais le bloc datasource doit quand même être déclaré ici (provider only).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── AUTH ────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          Role      @default(AUTEUR)
+  bio           String?
+  institution   String?
+  discipline    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  articles        Article[]
+  articlesRevue   ArticleRevue[]
+  livres          Livre[]
+  entretiens      Entretien[]
+  expertProfile   ExpertProfile?
+  coursCreated    Cours[]
+  inscriptions    Inscription[]
+  compteRendus    CompteRendu[]
+  accounts        Account[]
+  sessions        Session[]
+}
+
+enum Role {
+  ADMIN
+  AUTEUR
+  LECTEUR
+  EXPERT
+  FORMATEUR
+}
+
+// NextAuth models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@unique([identifier, token])
+}
+
+// ─── PILIER 1 : REVUE SCIENTIFIQUE ───────────────────────────────────────────
+
+model ArticleRevue {
+  id          String        @id @default(cuid())
+  titre       String
+  resume      String        @db.Text
+  motsClés    String[]
+  discipline  Discipline
+  langue      Langue        @default(FR)
+  doi         String?       @unique
+  fichierUrl  String?
+  statut      StatutRevue   @default(EN_ATTENTE)
+  accesLibre  Boolean       @default(false)
+  vues        Int           @default(0)
+  telechargements Int       @default(0)
+  volume      Int?
+  numero      Int?
+  pages       String?
+  auteurId    String
+  auteur      User          @relation(fields: [auteurId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  coAuteurs   CoAuteur[]
+}
+
+enum StatutRevue {
+  EN_ATTENTE
+  EN_REVISION
+  ACCEPTE
+  PUBLIE
+  REJETE
+}
+
+model CoAuteur {
+  id             String       @id @default(cuid())
+  nom            String
+  email          String?
+  institution    String?
+  articleRevueId String
+  articleRevue   ArticleRevue @relation(fields: [articleRevueId], references: [id], onDelete: Cascade)
+}
+
+// ─── PILIER 2 : CONSULTANCE ───────────────────────────────────────────────────
+
+model ExpertProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  titre       String
+  specialites String[]
+  cvUrl       String?
+  tarifHeure  Float?
+  disponible  Boolean  @default(true)
+  ville       String?
+  demandes    DemandeConsultance[]
+  createdAt   DateTime @default(now())
+}
+
+model DemandeConsultance {
+  id          String   @id @default(cuid())
+  expertId    String
+  expert      ExpertProfile @relation(fields: [expertId], references: [id])
+  nomClient   String
+  emailClient String
+  sujet       String
+  description String   @db.Text
+  budget      Float?
+  delai       String?
+  statut      StatutDemande @default(EN_ATTENTE)
+  createdAt   DateTime @default(now())
+}
+
+enum StatutDemande {
+  EN_ATTENTE
+  EN_COURS
+  CLOTURE
+}
+
+// ─── PILIER 3 : MAGAZINE ─────────────────────────────────────────────────────
+
+model Article {
+  id          String        @id @default(cuid())
+  titre       String
+  slug        String        @unique
+  chapeau     String
+  contenu     String        @db.Text
+  imageUrl    String?
+  discipline  Discipline
+  tags        String[]
+  statut      StatutArticle @default(BROUILLON)
+  vues        Int           @default(0)
+  auteurId    String
+  auteur      User          @relation(fields: [auteurId], references: [id])
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+enum StatutArticle {
+  BROUILLON
+  EN_ATTENTE
+  PUBLIE
+}
+
+// ─── PILIER 4 : ENTRETIENS ────────────────────────────────────────────────────
+
+model Entretien {
+  id           String         @id @default(cuid())
+  titre        String
+  slug         String         @unique
+  description  String
+  format       FormatEntretien
+  mediaUrl     String?
+  transcription String?       @db.Text
+  dureeMinutes Int?
+  imageUrl     String?
+  discipline   Discipline
+  statut       StatutArticle  @default(BROUILLON)
+  vues         Int            @default(0)
+  auteurId     String
+  auteur       User           @relation(fields: [auteurId], references: [id])
+  publishedAt  DateTime?
+  createdAt    DateTime       @default(now())
+}
+
+enum FormatEntretien {
+  PODCAST
+  VIDEO
+  TEXTE
+}
+
+// ─── PILIER 5 : ÉDITION ───────────────────────────────────────────────────────
+
+model Livre {
+  id            String      @id @default(cuid())
+  titre         String
+  slug          String      @unique
+  description   String      @db.Text
+  isbn          String?     @unique
+  couvertureUrl String?
+  extraitUrl    String?
+  lienAchat     String?
+  collection    String?
+  discipline    Discipline
+  annee         Int
+  pages         Int?
+  statut        StatutLivre @default(EN_ATTENTE)
+  auteurId      String
+  auteur        User        @relation(fields: [auteurId], references: [id])
+  createdAt     DateTime    @default(now())
+}
+
+enum StatutLivre {
+  EN_ATTENTE
+  PUBLIE
+}
+
+// ─── PILIER 6 : COLLOQUES ─────────────────────────────────────────────────────
+
+model Colloque {
+  id            String   @id @default(cuid())
+  titre         String
+  slug          String   @unique
+  description   String   @db.Text
+  lieu          String
+  dateDebut     DateTime
+  dateFin       DateTime
+  dateLimit     DateTime?
+  statut        StatutColloque @default(A_VENIR)
+  imageUrl      String?
+  programmeUrl  String?
+  actesUrl      String?
+  discipline    Discipline[]
+  sessions      Session_[]
+  communications Communication[]
+  createdAt     DateTime @default(now())
+}
+
+enum StatutColloque {
+  A_VENIR
+  OUVERT
+  CLOTURE
+  ARCHIVE
+}
+
+model Session_ {
+  id          String    @id @default(cuid())
+  colloqueId  String
+  colloque    Colloque  @relation(fields: [colloqueId], references: [id])
+  titre       String
+  horaire     DateTime
+  lieu        String?
+  animateur   String?
+  communications Communication[]
+}
+
+model Communication {
+  id          String    @id @default(cuid())
+  colloqueId  String
+  colloque    Colloque  @relation(fields: [colloqueId], references: [id])
+  sessionId   String?
+  session     Session_? @relation(fields: [sessionId], references: [id])
+  titre       String
+  auteurs     String
+  resume      String    @db.Text
+  fichierUrl  String?
+  statut      StatutRevue @default(EN_ATTENTE)
+  createdAt   DateTime  @default(now())
+}
+
+// ─── PILIER 7 : UNIVERSITÉ POPULAIRE ─────────────────────────────────────────
+
+model Cours {
+  id          String   @id @default(cuid())
+  titre       String
+  slug        String   @unique
+  description String   @db.Text
+  imageUrl    String?
+  niveau      Niveau   @default(DEBUTANT)
+  discipline  Discipline
+  dureeHeures Int?
+  gratuit     Boolean  @default(true)
+  statut      StatutArticle @default(BROUILLON)
+  formateurId String
+  formateur   User     @relation(fields: [formateurId], references: [id])
+  chapitres   Chapitre[]
+  inscriptions Inscription[]
+  createdAt   DateTime @default(now())
+}
+
+model Chapitre {
+  id        String   @id @default(cuid())
+  coursId   String
+  cours     Cours    @relation(fields: [coursId], references: [id])
+  titre     String
+  ordre     Int
+  videoUrl  String?
+  contenu   String?  @db.Text
+  dureeMin  Int?
+  quiz      Quiz[]
+}
+
+model Quiz {
+  id          String    @id @default(cuid())
+  chapitreId  String
+  chapitre    Chapitre  @relation(fields: [chapitreId], references: [id])
+  question    String
+  options     String[]
+  reponse     Int
+}
+
+model Inscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  coursId   String
+  cours     Cours    @relation(fields: [coursId], references: [id])
+  createdAt DateTime @default(now())
+  @@unique([userId, coursId])
+}
+
+model CompteRendu {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  chapitreId String
+  termine   Boolean  @default(false)
+  @@unique([userId, chapitreId])
+}
+
+// ─── ENUMS TRANSVERSAUX ───────────────────────────────────────────────────────
+
+enum Discipline {
+  SOCIOLOGIE
+  ANTHROPOLOGIE
+  HISTOIRE
+  GEOGRAPHIE_HUMAINE
+  ECONOMIE
+  DROIT
+  SCIENCE_POLITIQUE
+  PHILOSOPHIE
+  PSYCHOLOGIE_SOCIALE
+  SCIENCES_EDUCATION
+  LINGUISTIQUE
+  COMMUNICATION
+  DEMOGRAPHIE
+  ETUDES_GENRE
+  ETUDES_MALGACHES
+  RELATIONS_INTERNATIONALES
+}
+
+enum Langue {
+  FR
+  MG
+  EN
+}
+
+enum Niveau {
+  DEBUTANT
+  INTERMEDIAIRE
+  AVANCE
+}
+
+
+// Note: Sur Vercel, prisma generate est exécuté automatiquement via le buildCommand
+// Le client est généré dans node_modules/.prisma/client

@@ -1,0 +1,11 @@
+.env
+.env.local
+node_modules/
+.next/
+dist/
+.DS_Store
+
+# Fichiers uploadés en local (phase démo) — ne pas versionner le contenu,
+# seulement la structure de dossiers via .gitkeep
+public/uploads/**/*
+!public/uploads/**/.gitkeep

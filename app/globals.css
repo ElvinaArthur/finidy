@@ -1,0 +1,103 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-or: #e8a020;
+    --color-ambre: #7a4a10;
+    --color-sable: #f5edd8;
+    --color-ecru: #fefaf3;
+    --color-brun: #3d2008;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-nihary-ecru text-nihary-ambre-fonce font-body antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  /* Boutons */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-nihary
+           bg-nihary-or text-nihary-ambre-fonce font-body font-medium text-sm
+           hover:bg-nihary-or-clair transition-colors duration-200
+           focus:outline-none focus:ring-2 focus:ring-nihary-or focus:ring-offset-2;
+  }
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-nihary
+           border border-nihary-ambre text-nihary-ambre bg-transparent font-body font-medium text-sm
+           hover:bg-nihary-sable transition-colors duration-200
+           focus:outline-none focus:ring-2 focus:ring-nihary-ambre focus:ring-offset-2;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-nihary
+           text-nihary-gris font-body text-sm
+           hover:text-nihary-ambre hover:bg-nihary-sable transition-colors duration-200;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-lg border border-nihary-sable-fonce shadow-nihary-sm
+           hover:shadow-nihary-md transition-shadow duration-200;
+  }
+  .card-sable {
+    @apply bg-nihary-sable rounded-lg border border-nihary-sable-fonce;
+  }
+
+  /* Badges disciplines */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-body font-medium
+           bg-nihary-or-pale text-nihary-ambre border border-nihary-or/30;
+  }
+  .badge-libre {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-body font-medium
+           bg-green-50 text-green-700 border border-green-200;
+  }
+
+  /* Section headers */
+  .eyebrow {
+    @apply text-xs font-body font-medium tracking-widest uppercase text-nihary-or;
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full px-4 py-2.5 rounded-nihary border border-nihary-sable-fonce
+           bg-white text-nihary-ambre-fonce font-body text-sm
+           placeholder:text-nihary-gris-clair
+           focus:outline-none focus:ring-2 focus:ring-nihary-or focus:border-nihary-or
+           transition-colors duration-200;
+  }
+
+  /* DOI / références */
+  .doi {
+    @apply font-mono text-xs text-nihary-gris;
+  }
+
+  /* Séparateur ornemental */
+  .divider-or {
+    @apply h-px bg-gradient-to-r from-transparent via-nihary-or to-transparent my-8;
+  }
+
+  /* Corps de texte long-format (articles magazine, entretiens) */
+  .prose-nihary {
+    @apply text-base leading-loose;
+  }
+  .prose-nihary p {
+    @apply mb-5;
+  }
+}
