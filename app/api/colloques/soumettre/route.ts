@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/config";
+import { cleanString, disciplineValue, isRecord } from "@/lib/api-validation";
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,8 +10,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Connexion requise" }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { titre, auteurs, resume, discipline, colloqueId } = body;
+    const body: unknown = await req.json();
+    if (!isRecord(body)) return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
+    const titre = cleanString(body.titre, 300);
+    const auteurs = cleanString(body.auteurs, 500);
+    const resume = cleanString(body.resume, 20_000);
+    const discipline = disciplineValue(body.discipline);
+    const colloqueId = cleanString(body.colloqueId, 100);
 
     if (!titre || !auteurs || !resume || !discipline) {
       return NextResponse.json(
@@ -19,13 +25,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const targetId = colloqueId || (await getDefaultColloqueId());
+    const colloque = await prisma.colloque.findFirst({
+      where: {
+        id: targetId,
+        statut: { in: ["OUVERT", "A_VENIR"] },
+        OR: [{ dateLimit: null }, { dateLimit: { gte: new Date() } }],
+      },
+      select: { id: true },
+    });
+    if (!colloque) return NextResponse.json({ error: "Colloque fermé ou introuvable" }, { status: 400 });
+
     const communication = await prisma.communication.create({
       data: {
         titre,
         auteurs,
         resume,
+        discipline,
         statut: "EN_ATTENTE",
-        colloqueId: colloqueId || (await getDefaultColloqueId()),
+        colloqueId: colloque.id,
       },
     });
 

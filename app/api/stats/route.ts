@@ -34,16 +34,7 @@ export async function GET() {
       utilisateurs,
     })
   } catch (error) {
-    // Si la DB n'est pas encore connectée, retourner des zéros
-    return NextResponse.json({
-      articlesRevue: 0,
-      articlesMagazine: 0,
-      entretiens: 0,
-      livres: 0,
-      colloques: 0,
-      cours: 0,
-      experts: 0,
-      utilisateurs: 0,
-    })
+    console.error('GET /api/stats', error)
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 }

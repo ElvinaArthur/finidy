@@ -28,10 +28,10 @@ async function getArticle(id: string) {
     })
     if (!article) return null
 
-    await prisma.articleRevue.update({
+    void prisma.articleRevue.update({
       where: { id: article.id },
       data: { vues: { increment: 1 } },
-    })
+    }).catch((error) => console.error('Compteur revue', error))
 
     return article
   } catch {
@@ -42,7 +42,7 @@ async function getArticle(id: string) {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const article = await prisma.articleRevue.findUnique({
-    where: { id },
+    where: { id, statut: 'PUBLIE' },
     select: { titre: true, resume: true, auteur: { select: { name: true } }, doi: true, motsClés: true },
   })
   if (!article) return { title: 'Article introuvable | FINIDY Research Center' }

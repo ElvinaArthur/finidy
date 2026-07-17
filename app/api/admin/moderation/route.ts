@@ -15,7 +15,7 @@ export async function GET() {
   }
 
   try {
-    const [articlesRevue, articlesMagazine, entretiens] = await Promise.all([
+    const [articlesRevue, articlesMagazine, entretiens, livres, cours, communications] = await Promise.all([
       prisma.articleRevue.findMany({
         where: {
           statut: StatutRevue.EN_ATTENTE,
@@ -66,12 +66,18 @@ export async function GET() {
           createdAt: "asc",
         },
       }),
+      prisma.livre.findMany({ where: { statut: "EN_ATTENTE" }, include: { auteur: { select: { name: true, email: true } } }, orderBy: { createdAt: "asc" } }),
+      prisma.cours.findMany({ where: { statut: "EN_ATTENTE" }, include: { formateur: { select: { name: true, email: true } } }, orderBy: { createdAt: "asc" } }),
+      prisma.communication.findMany({ where: { statut: "EN_ATTENTE" }, include: { colloque: { select: { titre: true } } }, orderBy: { createdAt: "asc" } }),
     ]);
 
     return NextResponse.json({
       articlesRevue,
       articlesMagazine,
       entretiens,
+      livres,
+      cours,
+      communications,
     });
   } catch (error) {
     console.error("Erreur GET /api/admin/moderation :", error);
@@ -80,7 +86,7 @@ export async function GET() {
   }
 }
 
-const VALID_TYPES = ["articleRevue", "article", "entretien"] as const;
+const VALID_TYPES = ["articleRevue", "article", "entretien", "livre", "cours", "communication"] as const;
 
 type ContentType = (typeof VALID_TYPES)[number];
 
@@ -237,6 +243,24 @@ export async function PATCH(req: NextRequest) {
         success: true,
         item: updated,
       });
+    }
+
+    if (type === "livre") {
+      if (statut !== "EN_ATTENTE" && statut !== "PUBLIE" && statut !== "REJETE") return NextResponse.json({ error: "Statut de livre invalide" }, { status: 400 });
+      const updated = await prisma.livre.update({ where: { id }, data: { statut } });
+      return NextResponse.json({ success: true, item: updated });
+    }
+
+    if (type === "cours") {
+      if (!isArticleStatut(statut)) return NextResponse.json({ error: "Statut de cours invalide" }, { status: 400 });
+      const updated = await prisma.cours.update({ where: { id }, data: { statut } });
+      return NextResponse.json({ success: true, item: updated });
+    }
+
+    if (type === "communication") {
+      if (!isStatutRevue(statut)) return NextResponse.json({ error: "Statut de communication invalide" }, { status: 400 });
+      const updated = await prisma.communication.update({ where: { id }, data: { statut } });
+      return NextResponse.json({ success: true, item: updated });
     }
 
     return NextResponse.json(

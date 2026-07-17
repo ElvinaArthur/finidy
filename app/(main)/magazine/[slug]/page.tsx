@@ -15,10 +15,10 @@ async function getArticle(slug: string) {
     if (!article) return null;
 
     // Incrément réel du compteur de vues — pas une statistique fictive
-    await prisma.article.update({
+    void prisma.article.update({
       where: { id: article.id },
       data: { vues: { increment: 1 } },
-    });
+    }).catch((error) => console.error("Compteur article", error));
 
     return article;
   } catch {
@@ -54,7 +54,7 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const article = await prisma.article.findUnique({
-    where: { slug },
+    where: { slug, statut: "PUBLIE" },
     select: { titre: true, chapeau: true },
   });
   if (!article) return { title: "Article introuvable | FINIDY Research Center" };

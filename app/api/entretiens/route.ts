@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { disciplineValue, formatValue, pageValue } from "@/lib/api-validation";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const format = searchParams.get("format");
-    const discipline = searchParams.get("discipline");
-    const page = parseInt(searchParams.get("page") || "1");
+    const formatParam = searchParams.get("format");
+    const disciplineParam = searchParams.get("discipline");
+    const format = formatParam ? formatValue(formatParam) : null;
+    const discipline = disciplineParam ? disciplineValue(disciplineParam) : null;
+    if ((formatParam && !format) || (disciplineParam && !discipline)) return NextResponse.json({ error: "Filtre invalide" }, { status: 400 });
+    const page = pageValue(searchParams.get("page"));
     const limit = 12;
 
     const where: any = { statut: "PUBLIE" };
@@ -30,7 +36,8 @@ export async function GET(req: NextRequest) {
       page,
       pages: Math.ceil(total / limit),
     });
-  } catch {
-    return NextResponse.json({ entretiens: [], total: 0, page: 1, pages: 0 });
+  } catch (error) {
+    console.error("GET /api/entretiens", error);
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

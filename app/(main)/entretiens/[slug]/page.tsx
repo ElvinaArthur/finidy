@@ -18,10 +18,10 @@ async function getEntretien(slug: string) {
     })
     if (!entretien) return null
 
-    await prisma.entretien.update({
+    void prisma.entretien.update({
       where: { id: entretien.id },
       data: { vues: { increment: 1 } },
-    })
+    }).catch((error) => console.error('Compteur entretien', error))
 
     return entretien
   } catch {
@@ -31,7 +31,7 @@ async function getEntretien(slug: string) {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const entretien = await prisma.entretien.findUnique({ where: { slug }, select: { titre: true, description: true } })
+  const entretien = await prisma.entretien.findUnique({ where: { slug, statut: 'PUBLIE' }, select: { titre: true, description: true } })
   if (!entretien) return { title: 'Entretien introuvable | FINIDY Research Center' }
   return { title: `${entretien.titre} | FINIDY Research Center`, description: entretien.description }
 }

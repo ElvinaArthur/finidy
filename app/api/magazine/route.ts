@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { disciplineValue, pageValue } from "@/lib/api-validation";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const discipline = searchParams.get("discipline");
+    const disciplineParam = searchParams.get("discipline");
+    const discipline = disciplineParam ? disciplineValue(disciplineParam) : null;
+    if (disciplineParam && !discipline) return NextResponse.json({ error: "Discipline invalide" }, { status: 400 });
     const tag = searchParams.get("tag");
-    const page = parseInt(searchParams.get("page") || "1");
+    const page = pageValue(searchParams.get("page"));
     const limit = 12;
 
     const where: any = { statut: "PUBLIE" };
@@ -30,7 +35,8 @@ export async function GET(req: NextRequest) {
       page,
       pages: Math.ceil(total / limit),
     });
-  } catch {
-    return NextResponse.json({ articles: [], total: 0, page: 1, pages: 0 });
+  } catch (error) {
+    console.error("GET /api/magazine", error);
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

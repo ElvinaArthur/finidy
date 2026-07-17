@@ -4,7 +4,7 @@ const nextConfig = {
     serverActions: { allowedOrigins: ["localhost:3000"] },
   },
   images: {
-    domains: ["supabase.co", "*.supabase.co"],
+    remotePatterns: [{ protocol: "https", hostname: "**.supabase.co" }],
   },
   eslint: {
     ignoreDuringBuilds: true,

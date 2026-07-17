@@ -23,7 +23,7 @@ export async function generateMetadata({
 }) {
   const { id } = await params;
   const expert = await prisma.expertProfile.findUnique({
-    where: { id },
+    where: { id, disponible: true },
     include: { user: { select: { name: true } } },
   });
   if (!expert) return { title: "Expert introuvable | FINIDY Research Center" };

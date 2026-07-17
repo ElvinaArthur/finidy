@@ -5,14 +5,27 @@ import { Mail, MapPin, CheckCircle2 } from "lucide-react";
 export default function ContactForm() {
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({ nom: "", email: "", sujet: "", message: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
-    setDone(true);
-    setLoading(false);
+    setError("");
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Erreur d’envoi");
+      setDone(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur d’envoi");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (done)
@@ -105,6 +118,7 @@ export default function ContactForm() {
             >
               {loading ? "Envoi..." : "Envoyer le message"}
             </button>
+            {error && <p className="text-sm text-red-700" role="alert">{error}</p>}
           </form>
         </div>
 

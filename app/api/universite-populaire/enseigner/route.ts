@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         niveau,
         dureeHeures: dureeHeures || null,
         gratuit: gratuit ?? true,
-        statut: "BROUILLON",
+        statut: "EN_ATTENTE",
         formateurId: session.user.id,
       },
     });

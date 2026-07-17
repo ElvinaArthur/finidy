@@ -35,6 +35,7 @@ model User {
   compteRendus    CompteRendu[]
   accounts        Account[]
   sessions        Session[]
+  contactMessages ContactMessage[]
 }
 
 enum Role {
@@ -60,6 +61,7 @@ model Account {
   id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([provider, providerAccountId])
 }
 
@@ -75,32 +77,33 @@ model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
+
   @@unique([identifier, token])
 }
 
 // ─── PILIER 1 : REVUE SCIENTIFIQUE ───────────────────────────────────────────
 
 model ArticleRevue {
-  id          String        @id @default(cuid())
-  titre       String
-  resume      String        @db.Text
-  motsClés    String[]
-  discipline  Discipline
-  langue      Langue        @default(FR)
-  doi         String?       @unique
-  fichierUrl  String?
-  statut      StatutRevue   @default(EN_ATTENTE)
-  accesLibre  Boolean       @default(false)
-  vues        Int           @default(0)
-  telechargements Int       @default(0)
-  volume      Int?
-  numero      Int?
-  pages       String?
-  auteurId    String
-  auteur      User          @relation(fields: [auteurId], references: [id])
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  coAuteurs   CoAuteur[]
+  id              String      @id @default(cuid())
+  titre           String
+  resume          String      @db.Text
+  motsClés       String[]
+  discipline      Discipline
+  langue          Langue      @default(FR)
+  doi             String?     @unique
+  fichierUrl      String?
+  statut          StatutRevue @default(EN_ATTENTE)
+  accesLibre      Boolean     @default(false)
+  vues            Int         @default(0)
+  telechargements Int         @default(0)
+  volume          Int?
+  numero          Int?
+  pages           String?
+  auteurId        String
+  auteur          User        @relation(fields: [auteurId], references: [id])
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  coAuteurs       CoAuteur[]
 }
 
 enum StatutRevue {
@@ -123,31 +126,31 @@ model CoAuteur {
 // ─── PILIER 2 : CONSULTANCE ───────────────────────────────────────────────────
 
 model ExpertProfile {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id])
+  id          String               @id @default(cuid())
+  userId      String               @unique
+  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   titre       String
   specialites String[]
   cvUrl       String?
   tarifHeure  Float?
-  disponible  Boolean  @default(true)
+  disponible  Boolean              @default(true)
   ville       String?
   demandes    DemandeConsultance[]
-  createdAt   DateTime @default(now())
+  createdAt   DateTime             @default(now())
 }
 
 model DemandeConsultance {
-  id          String   @id @default(cuid())
+  id          String        @id @default(cuid())
   expertId    String
-  expert      ExpertProfile @relation(fields: [expertId], references: [id])
+  expert      ExpertProfile @relation(fields: [expertId], references: [id], onDelete: Cascade)
   nomClient   String
   emailClient String
   sujet       String
-  description String   @db.Text
+  description String        @db.Text
   budget      Float?
   delai       String?
   statut      StatutDemande @default(EN_ATTENTE)
-  createdAt   DateTime @default(now())
+  createdAt   DateTime      @default(now())
 }
 
 enum StatutDemande {
@@ -185,22 +188,22 @@ enum StatutArticle {
 // ─── PILIER 4 : ENTRETIENS ────────────────────────────────────────────────────
 
 model Entretien {
-  id           String         @id @default(cuid())
-  titre        String
-  slug         String         @unique
-  description  String
-  format       FormatEntretien
-  mediaUrl     String?
-  transcription String?       @db.Text
-  dureeMinutes Int?
-  imageUrl     String?
-  discipline   Discipline
-  statut       StatutArticle  @default(BROUILLON)
-  vues         Int            @default(0)
-  auteurId     String
-  auteur       User           @relation(fields: [auteurId], references: [id])
-  publishedAt  DateTime?
-  createdAt    DateTime       @default(now())
+  id            String          @id @default(cuid())
+  titre         String
+  slug          String          @unique
+  description   String
+  format        FormatEntretien
+  mediaUrl      String?
+  transcription String?         @db.Text
+  dureeMinutes  Int?
+  imageUrl      String?
+  discipline    Discipline
+  statut        StatutArticle   @default(BROUILLON)
+  vues          Int             @default(0)
+  auteurId      String
+  auteur        User            @relation(fields: [auteurId], references: [id])
+  publishedAt   DateTime?
+  createdAt     DateTime        @default(now())
 }
 
 enum FormatEntretien {
@@ -233,27 +236,28 @@ model Livre {
 enum StatutLivre {
   EN_ATTENTE
   PUBLIE
+  REJETE
 }
 
 // ─── PILIER 6 : COLLOQUES ─────────────────────────────────────────────────────
 
 model Colloque {
-  id            String   @id @default(cuid())
-  titre         String
-  slug          String   @unique
-  description   String   @db.Text
-  lieu          String
-  dateDebut     DateTime
-  dateFin       DateTime
-  dateLimit     DateTime?
-  statut        StatutColloque @default(A_VENIR)
-  imageUrl      String?
-  programmeUrl  String?
-  actesUrl      String?
-  discipline    Discipline[]
-  sessions      Session_[]
+  id             String          @id @default(cuid())
+  titre          String
+  slug           String          @unique
+  description    String          @db.Text
+  lieu           String
+  dateDebut      DateTime
+  dateFin        DateTime
+  dateLimit      DateTime?
+  statut         StatutColloque  @default(A_VENIR)
+  imageUrl       String?
+  programmeUrl   String?
+  actesUrl       String?
+  discipline     Discipline[]
+  sessions       Session_[]
   communications Communication[]
-  createdAt     DateTime @default(now())
+  createdAt      DateTime        @default(now())
 }
 
 enum StatutColloque {
@@ -264,69 +268,71 @@ enum StatutColloque {
 }
 
 model Session_ {
-  id          String    @id @default(cuid())
-  colloqueId  String
-  colloque    Colloque  @relation(fields: [colloqueId], references: [id])
-  titre       String
-  horaire     DateTime
-  lieu        String?
-  animateur   String?
+  id             String          @id @default(cuid())
+  colloqueId     String
+  colloque       Colloque        @relation(fields: [colloqueId], references: [id])
+  titre          String
+  horaire        DateTime
+  lieu           String?
+  animateur      String?
   communications Communication[]
 }
 
 model Communication {
-  id          String    @id @default(cuid())
-  colloqueId  String
-  colloque    Colloque  @relation(fields: [colloqueId], references: [id])
-  sessionId   String?
-  session     Session_? @relation(fields: [sessionId], references: [id])
-  titre       String
-  auteurs     String
-  resume      String    @db.Text
-  fichierUrl  String?
-  statut      StatutRevue @default(EN_ATTENTE)
-  createdAt   DateTime  @default(now())
+  id         String      @id @default(cuid())
+  colloqueId String
+  colloque   Colloque    @relation(fields: [colloqueId], references: [id])
+  sessionId  String?
+  session    Session_?   @relation(fields: [sessionId], references: [id])
+  titre      String
+  auteurs    String
+  resume     String      @db.Text
+  discipline Discipline?
+  fichierUrl String?
+  statut     StatutRevue @default(EN_ATTENTE)
+  createdAt  DateTime    @default(now())
 }
 
 // ─── PILIER 7 : UNIVERSITÉ POPULAIRE ─────────────────────────────────────────
 
 model Cours {
-  id          String   @id @default(cuid())
-  titre       String
-  slug        String   @unique
-  description String   @db.Text
-  imageUrl    String?
-  niveau      Niveau   @default(DEBUTANT)
-  discipline  Discipline
-  dureeHeures Int?
-  gratuit     Boolean  @default(true)
-  statut      StatutArticle @default(BROUILLON)
-  formateurId String
-  formateur   User     @relation(fields: [formateurId], references: [id])
-  chapitres   Chapitre[]
+  id           String        @id @default(cuid())
+  titre        String
+  slug         String        @unique
+  description  String        @db.Text
+  imageUrl     String?
+  niveau       Niveau        @default(DEBUTANT)
+  discipline   Discipline
+  dureeHeures  Int?
+  gratuit      Boolean       @default(true)
+  statut       StatutArticle @default(BROUILLON)
+  formateurId  String
+  formateur    User          @relation(fields: [formateurId], references: [id])
+  chapitres    Chapitre[]
   inscriptions Inscription[]
-  createdAt   DateTime @default(now())
+  createdAt    DateTime      @default(now())
 }
 
 model Chapitre {
-  id        String   @id @default(cuid())
-  coursId   String
-  cours     Cours    @relation(fields: [coursId], references: [id])
-  titre     String
-  ordre     Int
-  videoUrl  String?
-  contenu   String?  @db.Text
-  dureeMin  Int?
-  quiz      Quiz[]
+  id            String        @id @default(cuid())
+  coursId       String
+  cours         Cours         @relation(fields: [coursId], references: [id])
+  titre         String
+  ordre         Int
+  videoUrl      String?
+  contenu       String?       @db.Text
+  dureeMin      Int?
+  quiz          Quiz[]
+  comptesRendus CompteRendu[]
 }
 
 model Quiz {
-  id          String    @id @default(cuid())
-  chapitreId  String
-  chapitre    Chapitre  @relation(fields: [chapitreId], references: [id])
-  question    String
-  options     String[]
-  reponse     Int
+  id         String   @id @default(cuid())
+  chapitreId String
+  chapitre   Chapitre @relation(fields: [chapitreId], references: [id])
+  question   String
+  options    String[]
+  reponse    Int
 }
 
 model Inscription {
@@ -336,16 +342,30 @@ model Inscription {
   coursId   String
   cours     Cours    @relation(fields: [coursId], references: [id])
   createdAt DateTime @default(now())
+
   @@unique([userId, coursId])
 }
 
 model CompteRendu {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
   chapitreId String
-  termine   Boolean  @default(false)
+  chapitre   Chapitre @relation(fields: [chapitreId], references: [id], onDelete: Cascade)
+  termine    Boolean  @default(false)
+
   @@unique([userId, chapitreId])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  nom       String
+  email     String
+  sujet     String
+  message   String   @db.Text
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
 }
 
 // ─── ENUMS TRANSVERSAUX ───────────────────────────────────────────────────────
@@ -380,7 +400,6 @@ enum Niveau {
   INTERMEDIAIRE
   AVANCE
 }
-
 
 // Note: Sur Vercel, prisma generate est exécuté automatiquement via le buildCommand
 // Le client est généré dans node_modules/.prisma/client

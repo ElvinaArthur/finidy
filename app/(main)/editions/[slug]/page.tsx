@@ -7,7 +7,7 @@ import { DISCIPLINES_LABELS } from "@/lib/disciplines";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const livre = await prisma.livre.findUnique({
-    where: { slug },
+    where: { slug, statut: "PUBLIE" },
     select: { titre: true, description: true, auteur: { select: { name: true } }, annee: true },
   }).catch(() => null);
   if (!livre) return { title: "Ouvrage introuvable | FINIDY Research Center" };
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 async function getLivre(slug: string) {
   try {
     return await prisma.livre.findUnique({
-      where: { slug },
+      where: { slug, statut: "PUBLIE" },
       include: { auteur: { select: { name: true, institution: true, bio: true } } },
     });
   } catch {
