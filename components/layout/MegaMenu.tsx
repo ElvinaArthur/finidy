@@ -12,6 +12,7 @@ const PILIER_LINKS: Record<string, { label: string; href: string }[]> = {
   ],
   consultance: [
     { label: "Trouver un expert", href: "/consultance" },
+    { label: "Offres de recherche", href: "/consultance/offres" },
     { label: "Devenir expert", href: "/consultance/rejoindre" },
     { label: "Demander un devis", href: "/consultance/devis" },
   ],

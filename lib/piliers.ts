@@ -46,6 +46,7 @@ export const PILIERS: PilierMeta[] = [
     description: "Mise en relation avec des experts SHS",
     sousLiens: [
       { label: "Trouver un expert", href: "/consultance" },
+      { label: "Offres de recherche", href: "/consultance/offres" },
       { label: "Demande de devis", href: "/consultance/devis" },
       { label: "Devenir expert", href: "/consultance/rejoindre" },
     ],
