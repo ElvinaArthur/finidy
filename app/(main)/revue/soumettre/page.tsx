@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
+import SubmissionEvidenceFields, { uploadSubmissionEvidence } from "@/components/submission/SubmissionEvidenceFields";
 
 const DISCIPLINES = [
   ["SOCIOLOGIE", "Sociologie"],
@@ -38,14 +39,17 @@ export default function SoumettreArticlePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const formElement = e.currentTarget as HTMLFormElement;
     setLoading(true);
     setError("");
     try {
+      const submissionEvidence = await uploadSubmissionEvidence(formElement);
       const res = await fetch("/api/revue/soumettre", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          submissionEvidence,
           motsClés: form.motsClés
             .split(",")
             .map((m) => m.trim())
@@ -173,6 +177,7 @@ export default function SoumettreArticlePage() {
             </label>
           </div>
         </div>
+        <SubmissionEvidenceFields contentLabel="Article complet" contentAccept=".pdf,.doc,.docx,application/pdf" />
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-nihary text-sm text-red-700">
             {error}

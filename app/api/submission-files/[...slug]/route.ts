@@ -1,0 +1,7 @@
+import { readFile } from "fs/promises";
+import path from "path";
+import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth/config";
+
+const mime: Record<string, string> = { pdf: "application/pdf", jpg: "image/jpeg", png: "image/png", webp: "image/webp", doc: "application/msword", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", txt: "text/plain", mp3: "audio/mpeg", m4a: "audio/mp4", wav: "audio/wav", mp4: "video/mp4", webm: "video/webm" };
+export async function GET(_: Request, { params }: { params: { slug: string[] } }) { const session = await auth(); if (!session?.user?.id) return new NextResponse("Connexion requise", { status: 401 }); const [ownerId, filename, ...extra] = params.slug; const role = (session.user as { role?: string }).role; if (extra.length || !ownerId || !filename || (ownerId !== session.user.id && role !== "ADMIN") || !/^[a-zA-Z0-9.-]+$/.test(filename)) return new NextResponse("Accès refusé", { status: 403 }); try { const file = await readFile(path.join(process.cwd(), "storage", "submissions", ownerId, filename)); return new NextResponse(file, { headers: { "Content-Type": mime[filename.split(".").pop() || ""] || "application/octet-stream", "Content-Disposition": `inline; filename="${filename}"`, "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" } }); } catch { return new NextResponse("Fichier introuvable", { status: 404 }); } }

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 import { DISCIPLINES } from "@/lib/disciplines";
+import SubmissionEvidenceFields, { uploadSubmissionEvidence } from "@/components/submission/SubmissionEvidenceFields";
 
 export default function ProposerArticlePage() {
   const router = useRouter();
@@ -19,14 +20,17 @@ export default function ProposerArticlePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const formElement = e.currentTarget as HTMLFormElement;
     setLoading(true);
     setError("");
     try {
+      const submissionEvidence = await uploadSubmissionEvidence(formElement);
       const res = await fetch("/api/magazine/proposer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          submissionEvidence,
           tags: form.tags
             .split(",")
             .map((t) => t.trim())
@@ -142,6 +146,7 @@ export default function ProposerArticlePage() {
           />
         </div>
 
+        <SubmissionEvidenceFields contentLabel="Version éditable de l’article" contentAccept=".pdf,.doc,.docx,.txt,application/pdf,text/plain" />
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-nihary text-sm text-red-700">
             {error}

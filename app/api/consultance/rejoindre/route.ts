@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/config";
 import { hasCompleteProfile, incompleteProfileResponse } from "@/lib/auth/profile-completeness";
+import { missingEvidenceResponse, submissionEvidence } from "@/lib/submission-evidence";
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,6 +23,8 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
+    const evidence = submissionEvidence(body);
+    if (!evidence) return NextResponse.json(missingEvidenceResponse, { status: 400 });
     const { titre, specialites, ville, tarifHeure, cvUrl } = body;
 
     if (!titre || !specialites || specialites.length === 0) {
@@ -38,7 +41,8 @@ export async function POST(req: NextRequest) {
         specialites,
         ville: ville || null,
         tarifHeure: tarifHeure ? parseFloat(tarifHeure) : null,
-        cvUrl: cvUrl || null,
+        cvUrl: evidence.cvUrl || cvUrl || null,
+        submissionMeta: evidence,
         disponible: true,
       },
     });

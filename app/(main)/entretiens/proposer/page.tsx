@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { CheckCircle2 } from 'lucide-react'
 import { DISCIPLINES } from '@/lib/disciplines'
+import SubmissionEvidenceFields, { uploadSubmissionEvidence } from '@/components/submission/SubmissionEvidenceFields'
 
 export default function ProposerEntretienPage() {
   const router = useRouter()
@@ -16,12 +17,14 @@ export default function ProposerEntretienPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    const formElement = e.currentTarget as HTMLFormElement
     setLoading(true); setError('')
     try {
+      const submissionEvidence = await uploadSubmissionEvidence(formElement)
       const res = await fetch('/api/entretiens/proposer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, submissionEvidence }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Erreur')
@@ -125,6 +128,7 @@ export default function ProposerEntretienPage() {
             placeholder="Texte intégral de l'entretien..." />
         </div>
 
+        <SubmissionEvidenceFields contentLabel={form.format === 'VIDEO' ? 'Vidéo de l’entretien' : form.format === 'PODCAST' ? 'Audio du podcast' : 'Texte intégral'} contentAccept={form.format === 'VIDEO' ? 'video/mp4,video/webm' : form.format === 'PODCAST' ? 'audio/mpeg,audio/mp4,audio/wav' : '.pdf,.doc,.docx,.txt'} />
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-nihary text-sm text-red-700">{error}</div>
         )}

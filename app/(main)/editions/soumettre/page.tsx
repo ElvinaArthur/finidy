@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 import { DISCIPLINES } from "@/lib/disciplines";
+import SubmissionEvidenceFields, { uploadSubmissionEvidence } from "@/components/submission/SubmissionEvidenceFields";
 
 export default function SoumettreManuscritPage() {
   const router = useRouter();
@@ -20,13 +21,15 @@ export default function SoumettreManuscritPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const formElement = e.currentTarget as HTMLFormElement;
     setLoading(true);
     setError("");
     try {
+      const submissionEvidence = await uploadSubmissionEvidence(formElement);
       const res = await fetch("/api/editions/soumettre", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, annee: parseInt(form.annee) }),
+        body: JSON.stringify({ ...form, annee: parseInt(form.annee), submissionEvidence }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Erreur");
@@ -154,6 +157,7 @@ export default function SoumettreManuscritPage() {
           </div>
         </div>
 
+        <SubmissionEvidenceFields contentLabel="Manuscrit complet" contentAccept=".pdf,.doc,.docx,application/pdf" />
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-nihary text-sm text-red-700">
             {error}

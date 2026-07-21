@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/config";
 import { slugifyUnique } from "@/lib/slugify";
 import { hasCompleteProfile, incompleteProfileResponse } from "@/lib/auth/profile-completeness";
+import { missingEvidenceResponse, submissionEvidence } from "@/lib/submission-evidence";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,6 +14,8 @@ export async function POST(req: NextRequest) {
 
     if (!await hasCompleteProfile(session.user.id)) return NextResponse.json(incompleteProfileResponse, { status: 403 });
     const body = await req.json();
+    const evidence = submissionEvidence(body);
+    if (!evidence) return NextResponse.json(missingEvidenceResponse, { status: 400 });
     const {
       titre,
       description,
@@ -38,7 +41,9 @@ export async function POST(req: NextRequest) {
         format,
         discipline,
         dureeMinutes: dureeMinutes ? parseInt(dureeMinutes) : null,
-        mediaUrl: mediaUrl || null,
+        mediaUrl: evidence.contentUrl || mediaUrl || null,
+        imageUrl: evidence.thumbnailUrl,
+        submissionMeta: evidence,
         transcription: transcription || null,
         statut: "EN_ATTENTE",
         auteurId: session.user.id,

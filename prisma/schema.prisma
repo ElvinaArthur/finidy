@@ -118,6 +118,7 @@ model ArticleRevue {
   auteur          User        @relation(fields: [auteurId], references: [id])
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+  submissionMeta  Json?
   coAuteurs       CoAuteur[]
 }
 
@@ -152,6 +153,7 @@ model ExpertProfile {
   ville       String?
   demandes    DemandeConsultance[]
   createdAt   DateTime             @default(now())
+  submissionMeta Json?
 }
 
 model DemandeConsultance {
@@ -194,6 +196,7 @@ model Article {
   publishedAt DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+  submissionMeta Json?
 }
 
 enum StatutArticle {
@@ -223,6 +226,7 @@ model Entretien {
   reactions     EntretienReaction[]
   publishedAt   DateTime?
   createdAt     DateTime        @default(now())
+  submissionMeta Json?
 }
 
 model EntretienComment {
@@ -285,6 +289,7 @@ model Livre {
   auteurId      String
   auteur        User        @relation(fields: [auteurId], references: [id])
   createdAt     DateTime    @default(now())
+  submissionMeta Json?
 }
 
 enum StatutLivre {
@@ -345,6 +350,7 @@ model Communication {
   fichierUrl String?
   statut     StatutRevue @default(EN_ATTENTE)
   createdAt  DateTime    @default(now())
+  submissionMeta Json?
 }
 
 // ─── PILIER 7 : UNIVERSITÉ POPULAIRE ─────────────────────────────────────────
@@ -365,6 +371,7 @@ model Cours {
   chapitres    Chapitre[]
   inscriptions Inscription[]
   createdAt    DateTime      @default(now())
+  submissionMeta Json?
 }
 
 model Chapitre {
