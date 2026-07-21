@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
-  FileText, Users, ExternalLink,
-  Eye, ArrowDownToLine, Calendar, Globe, Hash, BookMarked,
+  FileText, Users, ExternalLink, BookOpen,
+  Eye, Calendar, Globe, Hash, BookMarked,
   ShieldCheck, Tag,
 } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
@@ -104,6 +104,7 @@ export default async function ArticleRevuePage({ params }: { params: Promise<{ i
     isPartOf: {
       '@type': 'Periodical',
       name: 'SAONTSY — Revue FINIDY Research Center',
+      issn: '3080-1842',
     },
     keywords: article.motsClés?.join(', ') ?? '',
     inLanguage: article.langue === 'EN' ? 'en' : article.langue === 'MG' ? 'mg' : 'fr',
@@ -189,6 +190,13 @@ export default async function ArticleRevuePage({ params }: { params: Promise<{ i
 
           <div className="divider-or mb-6" />
 
+          {article.fichierUrl && (
+            <a href="#lecture" className="btn-primary mb-8">
+              <BookOpen size={16} strokeWidth={2} />
+              Lire l'article
+            </a>
+          )}
+
           {/* Résumé */}
           <section className="mb-8">
             <h2 className="font-display font-semibold text-lg text-nihary-ambre-fonce mb-3">Résumé</h2>
@@ -245,14 +253,11 @@ export default async function ArticleRevuePage({ params }: { params: Promise<{ i
 
           {/* Lecteur PDF intégré */}
           {article.fichierUrl && (
-            <section>
+            <section id="lecture" className="mb-8 scroll-mt-24">
               <h2 className="font-display font-semibold text-base text-nihary-ambre-fonce mb-4">
                 Texte intégral
               </h2>
-              <PdfViewer
-                src={article.fichierUrl}
-                titre={article.titre}
-              />
+              <PdfViewer src={article.fichierUrl} titre={article.titre} />
             </section>
           )}
         </div>
@@ -260,28 +265,34 @@ export default async function ArticleRevuePage({ params }: { params: Promise<{ i
         {/* ── Colonne latérale ──────────────────────────────────────── */}
         <aside className="space-y-5">
 
-          {/* Thumbnail / couverture */}
+          {/* Couverture HTML : ne charge pas le PDF source */}
           <div className="rounded-xl overflow-hidden border border-nihary-sable-fonce bg-nihary-sable aspect-[3/4] flex items-center justify-center">
-            <div className="text-center p-6">
-              <FileText size={48} strokeWidth={1} className="text-nihary-ambre mx-auto mb-3" />
-              <p className="font-display font-semibold text-nihary-ambre-fonce text-sm leading-snug">
-                SAONTSY
-              </p>
-              <p className="font-mono text-xs text-nihary-gris mt-1">
-                {article.volume ? `Vol. ${article.volume}` : 'Revue'}
-                {article.numero ? ` · n°${article.numero}` : ''}
-              </p>
-            </div>
+              <div className="text-center p-6">
+                <FileText size={48} strokeWidth={1} className="text-nihary-ambre mx-auto mb-3" />
+                <p className="font-display font-semibold text-nihary-ambre-fonce text-sm leading-snug">
+                  SAONTSY
+                </p>
+                <p className="font-mono text-xs text-nihary-gris mt-1">
+                  {article.volume ? `Vol. ${article.volume}` : 'Revue'}
+                  {article.numero ? ` · n°${article.numero}` : ''}
+                </p>
+              </div>
           </div>
 
           {/* Accès texte intégral */}
           {article.fichierUrl ? (
-            <div className="card-sable p-4 flex items-center gap-3">
-              <ShieldCheck size={18} strokeWidth={1.75} className="text-nihary-or flex-shrink-0" />
-              <div>
-                <p className="text-xs font-body font-medium text-nihary-ambre-fonce">Texte intégral disponible</p>
-                <p className="text-xs font-body text-nihary-gris mt-0.5">Lecture seule · pas de téléchargement</p>
+            <div className="card-sable p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <ShieldCheck size={18} strokeWidth={1.75} className="text-nihary-or flex-shrink-0" />
+                <div>
+                  <p className="text-xs font-body font-medium text-nihary-ambre-fonce">Lecture PDF disponible</p>
+                  <p className="text-xs font-body text-nihary-gris mt-0.5">Lecture seule sur FINIDY, sans passer par le DOI</p>
+                </div>
               </div>
+              <a href="#lecture" className="btn-primary w-full justify-center text-sm">
+                <BookOpen size={14} strokeWidth={2} />
+                Lire l'article
+              </a>
             </div>
           ) : (
             <div className="card-sable p-4 flex items-center gap-3 opacity-60">
@@ -296,10 +307,6 @@ export default async function ArticleRevuePage({ params }: { params: Promise<{ i
             <div className="flex items-center gap-2 text-sm font-body text-nihary-gris">
               <Eye size={14} strokeWidth={1.75} className="text-nihary-or" />
               <span>{article.vues} consultations</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm font-body text-nihary-gris">
-              <ArrowDownToLine size={14} strokeWidth={1.75} className="text-nihary-or" />
-              <span>{article.telechargements} téléchargements</span>
             </div>
             <div className="flex items-center gap-2 text-sm font-body text-nihary-gris">
               <Calendar size={14} strokeWidth={1.75} className="text-nihary-or" />

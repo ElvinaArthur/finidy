@@ -24,7 +24,7 @@ export default function Footer() {
               Plateforme de publication scientifique ancrée à Madagascar, ouverte sur l'Océan Indien et l'Afrique.
             </p>
             <div className="mt-5 space-y-1 text-xs text-nihary-gris-clair">
-              <p>ISSN (en cours d'attribution)</p>
+              <p>Revue Saontsy · ISSN 3080-1842</p>
               <p>Antananarivo, Madagascar</p>
               <a href="mailto:contact@finidy.mg"
                 className="hover:text-nihary-or transition-colors">

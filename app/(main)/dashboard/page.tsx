@@ -13,10 +13,11 @@ import {
 } from "lucide-react";
 import { auth } from "@/lib/auth/config";
 import { prisma } from "@/lib/prisma";
+import EditorialRequestsPanel from "@/components/dashboard/EditorialRequestsPanel";
 
 async function getDashboardData(userId: string) {
   try {
-    const [user, articlesRevue, articlesMagazine, entretiens, livres, cours, inscriptions] =
+    const [user, articlesRevue, articlesMagazine, entretiens, livres, cours, inscriptions, editorialRequests, notifications] =
       await Promise.all([
         prisma.user.findUnique({ where: { id: userId } }),
         prisma.articleRevue.findMany({
@@ -55,8 +56,10 @@ async function getDashboardData(userId: string) {
           orderBy: { createdAt: "desc" },
           take: 5,
         }),
+        prisma.editorialRequest.findMany({ where: { userId }, orderBy: { createdAt: "desc" }, take: 20, select: { id: true, contentTitle: true, kind: true, statut: true, message: true, response: true, createdAt: true } }),
+        prisma.notification.findMany({ where: { userId }, orderBy: { createdAt: "desc" }, take: 8 }),
       ]);
-    return { user, articlesRevue, articlesMagazine, entretiens, livres, cours, inscriptions };
+    return { user, articlesRevue, articlesMagazine, entretiens, livres, cours, inscriptions, editorialRequests, notifications };
   } catch {
     return null;
   }
@@ -105,7 +108,7 @@ export default async function DashboardPage() {
   const data = await getDashboardData(session.user.id);
   if (!data?.user) redirect("/auth/connexion");
 
-  const { user, articlesRevue, articlesMagazine, entretiens, livres, cours, inscriptions } = data;
+  const { user, articlesRevue, articlesMagazine, entretiens, livres, cours, inscriptions, editorialRequests, notifications } = data;
   const isAdmin = (user as any).role === "ADMIN";
 
   return (
@@ -153,6 +156,8 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
+        {notifications.length > 0 && <section className="card-sable p-5 lg:col-span-2"><h2 className="font-display font-semibold mb-3">Notifications du comité</h2><div className="grid md:grid-cols-2 gap-3">{notifications.map((notification)=><div key={notification.id} className="bg-white rounded p-3"><p className="font-medium text-sm">{notification.titre}</p><p className="text-xs text-nihary-gris mt-1">{notification.message}</p></div>)}</div></section>}
+        <EditorialRequestsPanel contents={[...articlesRevue.map((item)=>({id:item.id,type:'revue',title:item.titre,status:item.statut})),...articlesMagazine.map((item)=>({id:item.id,type:'magazine',title:item.titre,status:item.statut})),...entretiens.map((item)=>({id:item.id,type:'entretien',title:item.titre,status:item.statut})),...livres.map((item)=>({id:item.id,type:'livre',title:item.titre,status:item.statut})),...cours.map((item)=>({id:item.id,type:'cours',title:item.titre,status:item.statut}))]} initialRequests={editorialRequests.map((item)=>({...item,createdAt:item.createdAt.toISOString()}))} />
         {/* Articles revue */}
         <section className="card p-5">
           <div className="flex items-center justify-between mb-4">
@@ -170,7 +175,7 @@ export default async function DashboardPage() {
             <ul className="space-y-2">
               {articlesRevue.map((a) => (
                 <li key={a.id} className="flex items-start justify-between gap-2">
-                  <span className="text-sm text-nihary-brun font-body line-clamp-1 flex-1">{a.titre}</span>
+                  {a.statut === "EN_REVISION" ? <Link href={`/dashboard/revision/${a.id}`} className="text-sm text-nihary-or font-medium line-clamp-1 flex-1">Réviser : {a.titre}</Link> : <span className="text-sm text-nihary-brun font-body line-clamp-1 flex-1">{a.titre}</span>}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <StatutBadge statut={a.statut} />
                     <span className="text-xs text-nihary-gris-clair font-mono hidden sm:block">

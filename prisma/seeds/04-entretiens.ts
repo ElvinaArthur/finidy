@@ -22,7 +22,7 @@ export async function seedEntretiens(auteurIds: Record<string, string>) {
       description: "Le sociologue Jean-Louis Rakotomalala revient sur ses deux années d'enquête au cœur de l'économie informelle d'Antananarivo. Il nous parle des stratégies de survie des travailleurs de rue, de la pandémie de Covid-19 et de ce que ces trajectoires nous disent des inégalités malgaches.",
       format: "PODCAST",
       // Podcast audio : pas de lien vidéo YouTube, on simule un fichier audio hébergé
-      mediaUrl: "/uploads/entretiens/podcast-rakotomalala-travail-informel.mp3",
+      mediaUrl: "https://www.youtube.com/watch?v=hQinJO64ahk",
       transcription: `FINIDY :Jean-Louis Rakotomalala, vous avez passé deux ans à suivre des travailleurs informels à Antananarivo. Qu'est-ce qui vous a le plus surpris ?
 
 Jean-Louis Rakotomalala : Ce qui m'a frappé d'emblée, c'est l'extraordinaire degré d'organisation de ces travailleurs qu'on qualifie trop vite d'"informels". Il y a des règles, des territoires, des hiérarchies, des solidarités. L'informel est en réalité très structuré — juste différemment de l'économie formelle.
@@ -43,7 +43,7 @@ Jean-Louis Rakotomalala : Elle est réelle, évidemment. Un porteur qui se bless
       slug: "memoire-coloniale-reconciliation-razafy",
       description: "Peut-on écrire une histoire commune entre la France et Madagascar ? L'historienne Hanta Razafy explore les conditions d'un travail mémoriel honnête, entre archives coloniales biaisées et mémoires orales vivantes.",
       format: "PODCAST",
-      mediaUrl: "/uploads/entretiens/podcast-razafy-memoire-coloniale.mp3",
+      mediaUrl: "https://www.youtube.com/watch?v=6Z57DUHjjoY",
       transcription: `FINIDY :Comment aborde-t-on les archives coloniales sans reproduire le regard colonial ?
 
 Hanta Razafy : C'est la question centrale de mon travail. Les archives coloniales sont des documents de domination — elles ont été produites par des administrateurs qui avaient un agenda politique. Les lire naïvement, c'est risquer de reconduire ce regard. Il faut les déconstruire, les croiser avec les sources orales, les confronter à la mémoire populaire.`,
@@ -60,7 +60,7 @@ Hanta Razafy : C'est la question centrale de mon travail. Les archives coloniale
       slug: "anthropologie-foncier-rakotondrabe",
       description: "Terre, identité et conflit : comment les communautés rurales malgaches vivent-elles les réformes foncières ? Voahirana Rakotondrabe partage 18 mois d'observation participante dans le Menabe.",
       format: "PODCAST",
-      mediaUrl: "/uploads/entretiens/podcast-rakotondrabe-foncier.mp3",
+      mediaUrl: "https://www.youtube.com/watch?v=XScxY4D6jV4",
       transcription: `FINIDY :Le dina est souvent présenté comme un droit coutumier menacé par la modernisation. Vous avez une lecture différente ?
 
 Voahirana Rakotondrabe : Oui. Le dina n'est pas un vestige du passé — c'est un système vivant qui s'adapte. Ce que j'ai observé dans le Menabe, c'est que les communautés utilisent le dina pour négocier avec les acteurs extérieurs — État, ONG, projets miniers. C'est une ressource stratégique, pas une survivance.`,
@@ -81,7 +81,7 @@ Voahirana Rakotondrabe : Oui. Le dina n'est pas un vestige du passé — c'est u
       format: "VIDEO",
       // Vidéo YouTube : "Introduction aux Sciences Humaines et Sociales en STAPS"
       // https://www.youtube.com/watch?v=nYEFussXqG0
-      mediaUrl: "https://www.youtube.com/embed/nYEFussXqG0",
+      mediaUrl: "https://www.youtube.com/watch?v=ofqNQ9Au_Ds",
       transcription: null,
       dureeMinutes: 47,
       imageUrl: "/uploads/entretiens/video-intro-sociologie.jpg",
@@ -98,7 +98,7 @@ Voahirana Rakotondrabe : Oui. Le dina n'est pas un vestige du passé — c'est u
       format: "VIDEO",
       // Vidéo YouTube : "Conférence économie africaine 2023 — grandes tendances macroéconomiques" (AFD)
       // https://www.youtube.com/watch?v=n-4Ne5xvs1M
-      mediaUrl: "https://www.youtube.com/embed/n-4Ne5xvs1M",
+      mediaUrl: "https://www.youtube.com/watch?v=SXPIqQC1jiI",
       transcription: null,
       dureeMinutes: 63,
       imageUrl: "/uploads/entretiens/video-democratie-afrique.jpg",
@@ -115,7 +115,7 @@ Voahirana Rakotondrabe : Oui. Le dina n'est pas un vestige du passé — c'est u
       format: "VIDEO",
       // Vidéo YouTube : "L'économie africaine 2023 vue par l'AFD" (Agence Française de Développement)
       // https://www.youtube.com/watch?v=gzPnfyeDP7o
-      mediaUrl: "https://www.youtube.com/embed/gzPnfyeDP7o",
+      mediaUrl: "https://www.youtube.com/watch?v=MwGRCEBDBSM",
       transcription: null,
       dureeMinutes: 89,
       imageUrl: "/uploads/entretiens/video-economie-malgache.jpg",
@@ -183,7 +183,11 @@ Mais si je dis que c'est le seul ascenseur qui fonctionne, c'est parce que les a
     if (!auteurId) continue;
     await prisma.entretien.upsert({
       where: { slug: e.slug },
-      update: {},
+      update: {
+        mediaUrl: e.mediaUrl,
+        imageUrl: e.imageUrl,
+        dureeMinutes: e.dureeMinutes,
+      },
       create: {
         titre: e.titre,
         slug: e.slug,

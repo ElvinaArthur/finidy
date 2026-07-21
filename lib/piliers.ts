@@ -29,7 +29,7 @@ export const PILIERS: PilierMeta[] = [
     label: "SAONTSY",
     icon: ScrollText,
     href: "/revue",
-    description: "Malgache dans tout ses états — contributions des chercheurs",
+    description: "Le Malgache dans tous ses états — contributions des chercheurs",
     sousLiens: [
       { label: "Articles scientifiques", href: "/revue" },
       { label: "Comité scientifique", href: "/revue/comite" },

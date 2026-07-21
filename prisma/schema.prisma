@@ -22,20 +22,35 @@ model User {
   bio           String?
   institution   String?
   discipline    String?
+  orcid         String?
+  website       String?
+  titreProfil   String?
+  telephone     String?
+  villeProfil   String?
+  pays          String?
+  linkedin      String?
+  langues       String[]  @default([])
+  expertises    String[]  @default([])
+  suspended     Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  articles        Article[]
-  articlesRevue   ArticleRevue[]
-  livres          Livre[]
-  entretiens      Entretien[]
-  expertProfile   ExpertProfile?
-  coursCreated    Cours[]
-  inscriptions    Inscription[]
-  compteRendus    CompteRendu[]
-  accounts        Account[]
-  sessions        Session[]
-  contactMessages ContactMessage[]
+  articles          Article[]
+  articlesRevue     ArticleRevue[]
+  livres            Livre[]
+  entretiens        Entretien[]
+  expertProfile     ExpertProfile?
+  coursCreated      Cours[]
+  inscriptions      Inscription[]
+  compteRendus      CompteRendu[]
+  accounts          Account[]
+  sessions          Session[]
+  contactMessages   ContactMessage[]
+  notifications     Notification[]
+  editorialRequests EditorialRequest[]
+  entretienComments EntretienComment[]
+  entretienReactions EntretienReaction[]
+  commandesPapier CommandePapier[]
 }
 
 enum Role {
@@ -150,6 +165,8 @@ model DemandeConsultance {
   budget      Float?
   delai       String?
   statut      StatutDemande @default(EN_ATTENTE)
+  notes       String?       @db.Text
+  updatedAt   DateTime      @updatedAt
   createdAt   DateTime      @default(now())
 }
 
@@ -202,8 +219,45 @@ model Entretien {
   vues          Int             @default(0)
   auteurId      String
   auteur        User            @relation(fields: [auteurId], references: [id])
+  comments      EntretienComment[]
+  reactions     EntretienReaction[]
   publishedAt   DateTime?
   createdAt     DateTime        @default(now())
+}
+
+model EntretienComment {
+  id          String    @id @default(cuid())
+  entretienId String
+  entretien   Entretien @relation(fields: [entretienId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contenu     String    @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([entretienId, createdAt])
+  @@index([userId])
+}
+
+model EntretienReaction {
+  id          String            @id @default(cuid())
+  entretienId String
+  entretien   Entretien         @relation(fields: [entretienId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        TypeReaction
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@unique([entretienId, userId])
+  @@index([entretienId, type])
+}
+
+enum TypeReaction {
+  AIME
+  COEUR
+  INSPIRANT
+  PERTINENT
 }
 
 enum FormatEntretien {
@@ -357,15 +411,112 @@ model CompteRendu {
   @@unique([userId, chapitreId])
 }
 
+model CommandePapier {
+  id             String                @id @default(cuid())
+  typeProduit    TypeProduitPapier
+  referenceId    String?
+  titreProduit   String
+  format         FormatPapier
+  quantite       Int                   @default(1)
+  nomClient      String
+  emailClient    String
+  telephone      String
+  adresse        String                @db.Text
+  ville          String
+  pays           String
+  notes          String?               @db.Text
+  statut         StatutCommandePapier  @default(NOUVELLE)
+  userId         String?
+  user           User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  @@index([statut, createdAt])
+  @@index([emailClient])
+}
+
+enum TypeProduitPapier {
+  REVUE
+  MAGAZINE
+}
+
+enum FormatPapier {
+  LIVRE_RELIE
+  DOS_CARRE
+}
+
+enum StatutCommandePapier {
+  NOUVELLE
+  CONFIRMEE
+  EN_PREPARATION
+  EXPEDIEE
+  LIVREE
+  ANNULEE
+}
+
 model ContactMessage {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   nom       String
   email     String
   sujet     String
-  message   String   @db.Text
+  message   String    @db.Text
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  statut    CrmStatut @default(NOUVEAU)
+  notes     String?   @db.Text
+  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now())
+}
+
+model EditorialRequest {
+  id           String                 @id @default(cuid())
+  userId       String
+  user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contentType  String
+  contentId    String
+  contentTitle String
+  kind         EditorialRequestKind
+  message      String                 @db.Text
+  response     String?                @db.Text
+  statut       EditorialRequestStatus @default(EN_ATTENTE)
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+
+  @@index([contentType, contentId])
+  @@index([userId, createdAt])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  titre     String
+  message   String   @db.Text
+  lien      String?
+  lue       Boolean  @default(false)
   createdAt DateTime @default(now())
+
+  @@index([userId, lue, createdAt])
+}
+
+enum EditorialRequestKind {
+  RETRAIT
+  QUESTION
+}
+
+enum EditorialRequestStatus {
+  EN_ATTENTE
+  ACCEPTEE
+  REFUSEE
+  TRAITEE
+}
+
+enum CrmStatut {
+  NOUVEAU
+  EN_COURS
+  EN_ATTENTE
+  RESOLU
+  ARCHIVE
 }
 
 // ─── ENUMS TRANSVERSAUX ───────────────────────────────────────────────────────

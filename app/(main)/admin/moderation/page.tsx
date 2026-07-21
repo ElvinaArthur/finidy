@@ -17,10 +17,10 @@ type Item = {
   auteurs?: string
   colloque?: { titre: string }
 }
-type Section = { key: string; type: ContentType; label: string; accept: string; reject: string }
+type Section = { key: string; type: ContentType; label: string; accept: string; reject: string; revision?: string }
 
 const SECTIONS: Section[] = [
-  { key: 'articlesRevue', type: 'articleRevue', label: 'Revue scientifique', accept: 'PUBLIE', reject: 'REJETE' },
+  { key: 'articlesRevue', type: 'articleRevue', label: 'Revue scientifique', accept: 'PUBLIE', reject: 'REJETE', revision: 'EN_REVISION' },
   { key: 'articlesMagazine', type: 'article', label: 'Magazine', accept: 'PUBLIE', reject: 'BROUILLON' },
   { key: 'entretiens', type: 'entretien', label: 'Entretiens', accept: 'PUBLIE', reject: 'BROUILLON' },
   { key: 'livres', type: 'livre', label: 'Livres', accept: 'PUBLIE', reject: 'REJETE' },
@@ -51,12 +51,12 @@ export default function ModerationPage() {
 
   useEffect(() => { void load() }, [load])
 
-  async function moderate(section: Section, id: string, statut: string) {
+  async function moderate(section: Section, id: string, statut: string, message?: string) {
     setProcessingId(id)
     try {
       const response = await fetch('/api/admin/moderation', {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: section.type, id, statut }),
+        body: JSON.stringify({ type: section.type, id, statut, message }),
       })
       const data = await response.json()
       if (!response.ok) throw new Error(data.error || 'Mise à jour impossible')
@@ -94,6 +94,7 @@ export default function ModerationPage() {
               </div>
               <div className="flex gap-2">
                 <button disabled={processingId === item.id} onClick={() => void moderate(section, item.id, section.accept)} className="btn-primary !py-1.5 !px-3 text-xs"><Check size={14} /> Accepter</button>
+                {section.revision && <button disabled={processingId === item.id} onClick={() => { const message = window.prompt('Décrivez précisément les corrections attendues'); if (message) void moderate(section, item.id, section.revision!, message) }} className="btn-outline !py-1.5 !px-3 text-xs">Révision</button>}
                 <button disabled={processingId === item.id} onClick={() => void moderate(section, item.id, section.reject)} className="btn-outline !py-1.5 !px-3 text-xs text-red-600"><X size={14} /> Rejeter</button>
               </div>
             </div>

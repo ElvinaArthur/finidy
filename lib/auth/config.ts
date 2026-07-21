@@ -40,7 +40,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { email },
         })
 
-        if (!user || !user.password) return null
+        if (!user || !user.password || user.suspended) return null
 
         const valid = await bcrypt.compare(
           credentials.password as string,

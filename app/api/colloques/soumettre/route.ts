@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/config";
 import { cleanString, disciplineValue, isRecord } from "@/lib/api-validation";
+import { hasCompleteProfile, incompleteProfileResponse } from "@/lib/auth/profile-completeness";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,6 +11,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Connexion requise" }, { status: 401 });
     }
 
+    if (!await hasCompleteProfile(session.user.id)) return NextResponse.json(incompleteProfileResponse, { status: 403 });
     const body: unknown = await req.json();
     if (!isRecord(body)) return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
     const titre = cleanString(body.titre, 300);

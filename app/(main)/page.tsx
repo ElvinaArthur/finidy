@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FileText, Users2, Landmark, PenSquare } from "lucide-react";
 import PilierCard from "@/components/shared/PilierCard";
 import { PILIERS } from "@/lib/piliers";
+import { prisma } from "@/lib/prisma";
 
 const PILIER_COUNT_LABELS: Record<string, string> = {
   revue: "articles publiés",
@@ -15,12 +16,19 @@ const PILIER_COUNT_LABELS: Record<string, string> = {
 
 async function getStats() {
   try {
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/stats`, {
-      next: { revalidate: 60 },
-    });
-    if (!res.ok) throw new Error();
-    return res.json();
+    const [articlesRevue, articlesMagazine, entretiens, livres, colloques, cours, experts, utilisateurs] =
+      await Promise.all([
+        prisma.articleRevue.count({ where: { statut: "PUBLIE" } }),
+        prisma.article.count({ where: { statut: "PUBLIE" } }),
+        prisma.entretien.count({ where: { statut: "PUBLIE" } }),
+        prisma.livre.count({ where: { statut: "PUBLIE" } }),
+        prisma.colloque.count(),
+        prisma.cours.count({ where: { statut: "PUBLIE" } }),
+        prisma.expertProfile.count({ where: { disponible: true } }),
+        prisma.user.count(),
+      ]);
+
+    return { articlesRevue, articlesMagazine, entretiens, livres, colloques, cours, experts, utilisateurs };
   } catch {
     return {
       articlesRevue: 0,

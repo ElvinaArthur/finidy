@@ -94,6 +94,7 @@ interface ModerationRequestBody {
   type?: unknown;
   id?: unknown;
   statut?: unknown;
+  message?: unknown;
 }
 
 function isContentType(value: unknown): value is ContentType {
@@ -133,7 +134,7 @@ export async function PATCH(req: NextRequest) {
   try {
     const body = (await req.json()) as ModerationRequestBody;
 
-    const { type, id, statut } = body;
+    const { type, id, statut, message } = body;
 
     if (!isContentType(type)) {
       return NextResponse.json(
@@ -159,6 +160,9 @@ export async function PATCH(req: NextRequest) {
           { status: 400 },
         );
       }
+      if (statut === StatutRevue.EN_REVISION && (typeof message !== "string" || !message.trim())) {
+        return NextResponse.json({ error: "Les corrections attendues doivent être précisées" }, { status: 400 });
+      }
 
       const updated = await prisma.articleRevue.update({
         where: {
@@ -168,6 +172,9 @@ export async function PATCH(req: NextRequest) {
           statut,
         },
       });
+      if (statut === StatutRevue.EN_REVISION) {
+        await prisma.notification.create({ data: { userId: updated.auteurId, titre: "Révision demandée", message: `${updated.titre} : ${(message as string).trim()}`, lien: "/dashboard" } });
+      }
 
       return NextResponse.json({
         success: true,

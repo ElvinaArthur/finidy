@@ -1,0 +1,9 @@
+import { FormatPapier, TypeProduitPapier } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth/config";
+import { cleanString, enumValue, isEmail, isRecord, positiveInt } from "@/lib/api-validation";
+import { prisma } from "@/lib/prisma";
+
+export async function POST(request: NextRequest) {
+  try { const body: unknown = await request.json(); if (!isRecord(body)) return NextResponse.json({ error: "Requête invalide" }, { status: 400 }); const typeProduit = enumValue(TypeProduitPapier, body.typeProduit); const format = enumValue(FormatPapier, body.format); const titreProduit = cleanString(body.titreProduit, 300); const nomClient = cleanString(body.nomClient, 120); const telephone = cleanString(body.telephone, 50); const adresse = cleanString(body.adresse, 1000); const ville = cleanString(body.ville, 120); const pays = cleanString(body.pays, 120); const quantite = positiveInt(body.quantite, 100); if (!typeProduit || !format || !titreProduit || !nomClient || !isEmail(body.emailClient) || !telephone || !adresse || !ville || !pays || !quantite) return NextResponse.json({ error: "Complétez tous les champs obligatoires" }, { status: 400 }); const session = await auth(); const commande = await prisma.commandePapier.create({ data: { typeProduit, format, titreProduit, referenceId: typeof body.referenceId === "string" ? body.referenceId.slice(0, 120) : null, quantite, nomClient, emailClient: body.emailClient.toLowerCase(), telephone, adresse, ville, pays, notes: body.notes ? cleanString(body.notes, 1500) : null, userId: session?.user?.id || null } }); return NextResponse.json({ success: true, id: commande.id }, { status: 201 }); } catch (error) { console.error("POST commande papier", error); return NextResponse.json({ error: "Commande impossible" }, { status: 500 }); }
+}

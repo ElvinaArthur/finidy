@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ShieldCheck, Inbox, Users, BarChart3, BookOpen } from "lucide-react";
+import { ShieldCheck, Inbox, Users, BarChart3, BookOpen, MessagesSquare } from "lucide-react";
 import { auth } from "@/lib/auth/config";
 import { prisma } from "@/lib/prisma";
 
@@ -63,6 +63,8 @@ export default async function AdminPage() {
 
       {/* Actions admin */}
       <div className="grid sm:grid-cols-2 gap-4">
+        <Link href="/admin/demandes-editoriales" className="card p-6 group hover:border-nihary-or transition-colors"><div className="flex items-start gap-4"><div className="p-3 rounded-nihary bg-nihary-or-pale text-nihary-ambre"><Inbox size={24}/></div><div><h2 className="font-display font-semibold text-nihary-ambre-fonce mb-1">Demandes des auteurs</h2><p className="text-sm text-nihary-gris">Répondre aux questions et demandes de retrait.</p></div></div></Link>
+        <Link href="/admin/crm" className="card p-6 group hover:border-nihary-or transition-colors"><div className="flex items-start gap-4"><div className="p-3 rounded-nihary bg-nihary-or-pale text-nihary-ambre"><MessagesSquare size={24} /></div><div><h2 className="font-display font-semibold text-nihary-ambre-fonce mb-1">CRM scientifique</h2><p className="text-sm text-nihary-gris">Traiter les messages, demandes d’expertise et prospects.</p></div></div></Link>
         <Link
           href="/admin/moderation"
           className="card p-6 group hover:border-nihary-or transition-colors"

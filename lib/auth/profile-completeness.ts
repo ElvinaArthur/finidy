@@ -1,0 +1,3 @@
+import { prisma } from "@/lib/prisma";
+export async function hasCompleteProfile(userId:string){const u=await prisma.user.findUnique({where:{id:userId},select:{name:true,institution:true,discipline:true,bio:true,titreProfil:true,telephone:true,villeProfil:true,pays:true,langues:true,expertises:true}});return Boolean(u&&[u.name,u.institution,u.discipline,u.bio,u.titreProfil,u.telephone,u.villeProfil,u.pays].every(Boolean)&&u.langues.length&&u.expertises.length)}
+export const incompleteProfileResponse={error:"Complétez votre profil professionnel avant de publier",code:"PROFILE_INCOMPLETE",profileUrl:"/dashboard/profil"};

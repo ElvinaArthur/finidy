@@ -13,12 +13,13 @@ export async function seedUsers() {
   // ── ADMIN ──────────────────────────────────────────────────────────────────
   const admin = await prisma.user.upsert({
     where: { email: "admin@nihary.mg" },
-    update: {},
+    update: { emailVerified: new Date() },
     create: {
       email: "admin@nihary.mg",
       name: "Équipe FINIDY Research Center",
       password: await hash("NiharyAdmin2024!"),
       role: "ADMIN",
+      emailVerified: new Date(),
       institution: "FINIDY Research Center — Plateforme SHS Madagascar",
       bio: "Équipe éditoriale et technique de la plateforme FINIDY Research Center.",
     },
@@ -27,12 +28,13 @@ export async function seedUsers() {
   // ── COMPTE TEST ────────────────────────────────────────────────────────────
   const testUser = await prisma.user.upsert({
     where: { email: "test@nihary.mg" },
-    update: {},
+    update: { emailVerified: new Date() },
     create: {
       email: "test@nihary.mg",
       name: "Compte Test",
       password: await hash("TestNihary2024!"),
       role: "AUTEUR",
+      emailVerified: new Date(),
       institution: "Université d'Antananarivo",
       bio: "Compte de démonstration pour tester la plateforme FINIDY Research Center.",
       discipline: "SOCIOLOGIE",
@@ -101,8 +103,8 @@ export async function seedUsers() {
   for (const a of auteurs) {
     const user = await prisma.user.upsert({
       where: { email: a.email },
-      update: { image: a.image },
-      create: { ...a, password: await hash("Nihary2024!") },
+      update: { image: a.image, emailVerified: new Date() },
+      create: { ...a, emailVerified: new Date(), password: await hash("Nihary2024!") },
     });
     createdAuteurs[a.email] = user;
   }

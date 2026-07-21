@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BookOpen, ChevronDown, ChevronUp, Lock } from 'lucide-react'
 
 interface PdfViewerProps {
@@ -10,8 +10,22 @@ interface PdfViewerProps {
 export default function PdfViewer({ src, titre }: PdfViewerProps) {
   const [open, setOpen] = useState(false)
 
-  // URL directe vers le fichier statique dans public/ + params Chrome pour cacher la toolbar
-  const iframeSrc = `${src}#toolbar=0&navpanes=0&scrollbar=1`
+  useEffect(() => {
+    const openFromHash = () => {
+      if (window.location.hash === '#lecture') setOpen(true)
+    }
+
+    openFromHash()
+    window.addEventListener('hashchange', openFromHash)
+    return () => window.removeEventListener('hashchange', openFromHash)
+  }, [])
+
+  // Les articles passent par la route inline : l'URL statique est bloquée
+  // par middleware afin de ne pas exposer un lien de téléchargement direct.
+  const readerSrc = src.startsWith('/uploads/articles-pdf/')
+    ? src.replace('/uploads/articles-pdf/', '/api/pdf/')
+    : src
+  const iframeSrc = `${readerSrc}#toolbar=0&navpanes=0&scrollbar=1`
 
   return (
     <div className="mb-8">

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ScrollText, Plus } from "lucide-react";
+import { BadgeCheck, BookOpen, MapPin, PackageCheck, Plus, ScrollText } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
 const DISCIPLINES_LABELS: Record<string, string> = {
@@ -37,7 +37,7 @@ async function getArticles() {
 export const metadata = {
   title: "SAONTSY — Revue scientifique | FINIDY Research Center",
   description:
-    "SAONTSY est la revue scientifique peer-reviewed du FINIDY Research Center, dédiée aux contributions des chercheurs en Sciences Humaines et Sociales de Madagascar et de l'Océan Indien — Malgache dans tout ses états.",
+    "SAONTSY est la revue scientifique peer-reviewed du FINIDY Research Center, dédiée aux contributions des chercheurs en Sciences Humaines et Sociales de Madagascar et de l'Océan Indien — Le Malgache dans tous ses états.",
   keywords: ['revue scientifique Madagascar', 'peer review SHS', 'SAONTSY', 'FINIDY Research Center', 'article de recherche', 'sciences humaines Madagascar'],
   openGraph: {
     title: "SAONTSY — Revue scientifique FINIDY Research Center",
@@ -46,6 +46,7 @@ export const metadata = {
     url: 'https://finidy.mg/revue',
   },
   alternates: { canonical: 'https://finidy.mg/revue' },
+  other: { ISSN: '3080-1842' },
 };
 
 export default async function RevuePage() {
@@ -53,24 +54,30 @@ export default async function RevuePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+      <div className="mb-8 flex flex-col gap-6 rounded-xl border border-nihary-sable-fonce bg-nihary-gradient p-7 sm:flex-row sm:items-end sm:justify-between sm:p-10">
         <div>
-          <span className="eyebrow">Revue scientifique · FINIDY Research Center</span>
-          <h1 className="font-display font-bold text-display-md text-nihary-ambre-fonce mt-1">
-            SAONTSY
-          </h1>
+          <span className="eyebrow">Revue scientifique · Évaluation par les pairs</span>
+          <h1 className="mt-2 font-display text-4xl font-bold text-nihary-ambre-fonce sm:text-5xl">SAONTSY</h1>
           <p className="font-display italic text-nihary-brun mt-0.5 text-lg">
-            Malgache dans tout ses états
+            Le Malgache dans tous ses états
           </p>
-          <p className="text-nihary-gris font-body mt-2">
-            Contributions des chercheurs au sein du FINIDY Research Center et ses collaborateurs
-          </p>
+          <p className="mt-3 max-w-2xl text-lg leading-7 text-nihary-brun">La recherche malgache publiée, discutée et désormais disponible en lecture numérique ou en édition papier professionnelle.</p>
         </div>
-        <Link href="/revue/soumettre" className="btn-primary flex-shrink-0">
-          <Plus size={16} strokeWidth={2} />
-          Soumettre un article
-        </Link>
+        <div className="flex flex-wrap gap-3"><Link href="/commander?type=REVUE&titre=SAONTSY%20%E2%80%94%20%C3%A9dition%20papier" className="btn-outline"><PackageCheck size={16} />Commander la revue</Link><Link href="/revue/soumettre" className="btn-primary flex-shrink-0"><Plus size={16} strokeWidth={2} />Soumettre un article</Link></div>
       </div>
+
+      <section className="card-sable p-5 mb-8" aria-label="Informations officielles de la revue">
+        <div className="flex items-center gap-2 mb-4">
+          <BadgeCheck size={18} className="text-emerald-700" />
+          <h2 className="font-display font-semibold text-nihary-ambre-fonce">Notice bibliographique confirmée</h2>
+        </div>
+        <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+          <div><dt className="font-mono text-xs uppercase tracking-wider text-nihary-gris">Identifiants</dt><dd className="mt-1 text-nihary-brun"><strong>ISSN :</strong> 3080-1842</dd><dd className="text-nihary-brun"><strong>ISSN-L :</strong> 3080-1842</dd></div>
+          <div><dt className="font-mono text-xs uppercase tracking-wider text-nihary-gris">Titre officiel</dt><dd className="mt-1 font-medium text-nihary-brun">Revue Saontsy</dd><dd className="text-nihary-gris">Titre alternatif : Saontsy</dd></div>
+          <div><dt className="font-mono text-xs uppercase tracking-wider text-nihary-gris">Publication</dt><dd className="mt-1 flex items-center gap-1.5 text-nihary-brun"><BookOpen size={14} /> Support : imprimé</dd></div>
+          <div><dt className="font-mono text-xs uppercase tracking-wider text-nihary-gris">Pays</dt><dd className="mt-1 flex items-center gap-1.5 text-nihary-brun"><MapPin size={14} /> Madagascar</dd></div>
+        </dl>
+      </section>
 
       {articles.length === 0 ? (
         <div className="card-sable p-16 text-center">

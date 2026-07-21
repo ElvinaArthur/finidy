@@ -92,6 +92,17 @@ const IMAGES: Array<{ dest: string; seed: string; label: string }> = [
   { dest: "uploads/couvertures/livre-madagascar-politique.jpg",     seed: "politics1", label: "Couverture Madagascar politique" },
   { dest: "uploads/couvertures/livre-apprendre-malgache.jpg",       seed: "classroom1",label: "Couverture Apprendre malgache" },
   { dest: "uploads/couvertures/livre-femmes-pouvoir-mada.jpg",      seed: "portrait1", label: "Couverture Femmes et pouvoir" },
+
+  // Cours (thumbnails 16:9)
+  { dest: "uploads/cours/cours-intro-sociologie.jpg", seed: "social-network", label: "Cours introduction à la sociologie" },
+  { dest: "uploads/cours/cours-histoire-madagascar.jpg", seed: "madagascar-history", label: "Cours histoire de Madagascar" },
+  { dest: "uploads/cours/cours-methodes-recherche.jpg", seed: "research-methods", label: "Cours méthodes de recherche" },
+  { dest: "uploads/cours/cours-gouvernance-afrique.jpg", seed: "africa-governance", label: "Cours gouvernance en Afrique" },
+
+  // Colloques (bannières 16:9)
+  { dest: "uploads/colloques/colloque-shs-ocean-indien-2025.jpg", seed: "indian-ocean-conference-2025", label: "Colloque SHS 2025" },
+  { dest: "uploads/colloques/colloque-education-bilingue-2026.jpg", seed: "bilingual-education-2026", label: "Colloque éducation bilingue 2026" },
+  { dest: "uploads/colloques/colloque-shs-ocean-indien-2024.jpg", seed: "indian-ocean-conference-2024", label: "Colloque SHS 2024" },
 ];
 
 // ─── PDFs ────────────────────────────────────────────────────────────────────
@@ -236,6 +247,27 @@ const PDFS: PdfSpec[] = [
 
 // ─── Générateur PDF ───────────────────────────────────────────────────────────
 
+const EXTRA_PDFS: PdfSpec[] = [
+  {
+    dest: "uploads/colloques/programme-shs-oi-2024.pdf",
+    titre: "Programme - 4e Colloque International SHS Ocean Indien",
+    auteur: "FINIDY Research Center", annee: 2024,
+    resume: "Programme du colloque consacre aux inegalites et au developpement dans l'Ocean Indien.",
+  },
+  {
+    dest: "uploads/colloques/actes-shs-oi-2024.pdf",
+    titre: "Actes - 4e Colloque International SHS Ocean Indien",
+    auteur: "FINIDY Research Center", annee: 2024,
+    resume: "Actes reunissant les communications sur les inegalites et le developpement dans l'Ocean Indien.",
+  },
+  {
+    dest: "uploads/cv/cv-andriantsoa.pdf",
+    titre: "Curriculum vitae - Fidy Andriantsoa",
+    auteur: "Fidy Andriantsoa",
+    resume: "Economiste du developpement specialise en evaluation d'impact, economie rurale et politiques sociales.",
+  },
+];
+
 function wrapText(text: string, maxChars: number): string[] {
   const words = text.split(" ");
   const lines: string[] = [];
@@ -343,6 +375,9 @@ async function main() {
     "uploads/articles-pdf",
     "uploads/extraits",
     "uploads/avatars",
+    "uploads/cours",
+    "uploads/colloques",
+    "uploads/cv",
   ];
   for (const d of dirs) ensureDir(path.join(ROOT, d));
 
@@ -350,7 +385,12 @@ async function main() {
   for (const img of IMAGES) {
     const dest = path.join(ROOT, img.dest);
     const isAvatar = img.dest.startsWith("uploads/avatars/");
-    const url = isAvatar ? picsumUrl(img.seed, 400, 400) : picsumUrl(img.seed);
+    const isLandscape = img.dest.startsWith("uploads/cours/") || img.dest.startsWith("uploads/colloques/");
+    const url = isAvatar
+      ? picsumUrl(img.seed, 400, 400)
+      : isLandscape
+        ? picsumUrl(img.seed, 1280, 720)
+        : picsumUrl(img.seed);
     try {
       await downloadFile(url, dest);
       console.log(`   ✅ ${img.label}`);
@@ -365,7 +405,7 @@ async function main() {
   console.log("📄  Génération des PDFs...\n");
 
   let pdfOk = 0;
-  for (const spec of PDFS) {
+  for (const spec of [...PDFS, ...EXTRA_PDFS]) {
     const dest = path.join(ROOT, spec.dest);
     if (fs.existsSync(dest)) {
       console.log(`   ⏭  Déjà présent : ${path.basename(dest)}`);
@@ -382,7 +422,7 @@ async function main() {
     }
   }
 
-  console.log(`\n   PDFs : ${pdfOk}/${PDFS.length} générés`);
+  console.log(`\n   PDFs : ${pdfOk}/${PDFS.length + EXTRA_PDFS.length} générés`);
   console.log("\n✨  Assets terminés.\n");
 }
 
