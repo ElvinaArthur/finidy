@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth/config'
 import { hasCompleteProfile, incompleteProfileResponse } from '@/lib/auth/profile-completeness'
 import { missingEvidenceResponse, submissionEvidence } from '@/lib/submission-evidence'
+import { forbiddenPermissionResponse, hasPermission } from '@/lib/auth/permissions'
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,6 +12,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Connexion requise' }, { status: 401 })
     }
     if (!await hasCompleteProfile(session.user.id)) return NextResponse.json(incompleteProfileResponse, { status: 403 })
+    if (!await hasPermission(session.user.id, 'SUBMIT_REVUE')) return NextResponse.json(forbiddenPermissionResponse, { status: 403 })
+    const directPublish = await hasPermission(session.user.id, 'PUBLISH_CONTENT')
     const body = await req.json()
     const evidence = submissionEvidence(body)
     if (!evidence) return NextResponse.json(missingEvidenceResponse, { status: 400 })
@@ -22,7 +25,7 @@ export async function POST(req: NextRequest) {
       data: {
         titre, resume, motsClés: motsClés || [], discipline,
         langue: langue || 'FR', accesLibre: accesLibre || false,
-        statut: 'EN_ATTENTE', auteurId: session.user.id,
+        statut: directPublish ? 'PUBLIE' : 'EN_ATTENTE', auteurId: session.user.id,
         fichierUrl: evidence.contentUrl, submissionMeta: evidence,
       },
     })

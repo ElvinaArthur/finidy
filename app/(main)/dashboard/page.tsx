@@ -14,6 +14,8 @@ import {
 import { auth } from "@/lib/auth/config";
 import { prisma } from "@/lib/prisma";
 import EditorialRequestsPanel from "@/components/dashboard/EditorialRequestsPanel";
+import PublishingCenter from "@/components/dashboard/PublishingCenter";
+import { getAccess, type Permission } from "@/lib/auth/permissions";
 
 async function getDashboardData(userId: string) {
   try {
@@ -110,6 +112,8 @@ export default async function DashboardPage() {
 
   const { user, articlesRevue, articlesMagazine, entretiens, livres, cours, inscriptions, editorialRequests, notifications } = data;
   const isAdmin = (user as any).role === "ADMIN";
+  const access = await getAccess(user.id);
+  const permissions = (access?.permissions || []) as Permission[];
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -136,6 +140,8 @@ export default async function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      <PublishingCenter permissions={permissions} />
 
       {/* Compteurs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">

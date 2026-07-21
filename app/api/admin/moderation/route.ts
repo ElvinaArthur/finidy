@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { StatutRevue } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/auth/admin";
+import { auth } from "@/lib/auth/config";
+import { hasPermission } from "@/lib/auth/permissions";
 
 export async function GET() {
-  const session = await requireAdmin();
+  const session = await auth();
 
-  if (!session) {
+  if (!session?.user?.id || !await hasPermission(session.user.id, "MODERATE_CONTENT")) {
     return NextResponse.json(
       { error: "Accès réservé aux administrateurs" },
       { status: 403 },
@@ -122,9 +123,9 @@ function isArticleStatut(value: unknown): value is ArticleStatut {
 }
 
 export async function PATCH(req: NextRequest) {
-  const session = await requireAdmin();
+  const session = await auth();
 
-  if (!session) {
+  if (!session?.user?.id || !await hasPermission(session.user.id, "MODERATE_CONTENT")) {
     return NextResponse.json(
       { error: "Accès réservé aux administrateurs" },
       { status: 403 },

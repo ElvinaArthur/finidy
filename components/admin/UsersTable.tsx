@@ -1,22 +1,13 @@
-'use client'
-
-import { useMemo, useState } from 'react'
-import { Search } from 'lucide-react'
-
-type UserRow = { id: string; name: string | null; email: string; role: string; suspended: boolean; institution: string | null; createdAt: string }
-const ROLES = ['ADMIN', 'AUTEUR', 'LECTEUR', 'EXPERT', 'FORMATEUR']
-
-export default function UsersTable({ initialUsers, currentUserId }: { initialUsers: UserRow[]; currentUserId: string }) {
-  const [users, setUsers] = useState(initialUsers); const [query, setQuery] = useState(''); const [error, setError] = useState('')
-  const filtered = useMemo(() => users.filter((user) => `${user.name} ${user.email} ${user.institution}`.toLowerCase().includes(query.toLowerCase())), [users, query])
-  async function update(id: string, data: { role?: string; suspended?: boolean }) {
-    setError(''); const response = await fetch('/api/admin/users', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, ...data }) }); const result = await response.json()
-    if (!response.ok) { setError(result.error || 'Erreur'); return }
-    setUsers((current) => current.map((user) => user.id === id ? { ...user, ...result.user } : user))
-  }
-  return <div className="space-y-4">
-    <div className="relative max-w-md"><Search className="absolute left-3 top-3 text-nihary-gris" size={17} /><input className="input pl-10" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Rechercher un membre…" /></div>
-    {error && <p className="text-sm text-red-700">{error}</p>}
-    <div className="card overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-left"><th className="p-3">Membre</th><th>Institution</th><th>Rôle</th><th>État</th><th>Inscription</th></tr></thead><tbody>{filtered.map((user) => <tr key={user.id} className="border-t"><td className="p-3"><p className="font-medium">{user.name || 'Sans nom'}</p><p className="text-xs text-nihary-gris">{user.email}</p></td><td>{user.institution || '—'}</td><td><select className="input !py-1 !w-auto" value={user.role} onChange={(e) => void update(user.id, { role: e.target.value })} disabled={user.id === currentUserId}>{ROLES.map((role) => <option key={role}>{role}</option>)}</select></td><td><button className={user.suspended ? 'text-green-700' : 'text-red-700'} disabled={user.id === currentUserId} onClick={() => void update(user.id, { suspended: !user.suspended })}>{user.suspended ? 'Réactiver' : 'Suspendre'}</button></td><td>{new Date(user.createdAt).toLocaleDateString('fr-FR')}</td></tr>)}</tbody></table></div>
-  </div>
+"use client";
+import { useMemo, useState } from "react";
+import { ChevronDown, Search, ShieldCheck } from "lucide-react";
+type UserRow={id:string;name:string|null;email:string;role:string;suspended:boolean;institution:string|null;createdAt:string;permissions:string[];deniedPermissions:string[];effectivePermissions:string[]};
+const ROLES=["ADMIN","AUTEUR","LECTEUR","EXPERT","FORMATEUR"];
+const CAPABILITIES=[["SUBMIT_REVUE","Revue"],["SUBMIT_MAGAZINE","Magazine"],["SUBMIT_ENTRETIEN","Entretiens"],["SUBMIT_LIVRE","Éditions"],["SUBMIT_COMMUNICATION","Colloques"],["SUBMIT_COURS","Cours"],["MANAGE_EXPERT_PROFILE","Profil expert"],["MANAGE_OFFERS","Offres"],["PUBLISH_CONTENT","Publication directe"],["MODERATE_CONTENT","Modération"],["VIEW_CRM","CRM"],["MANAGE_USERS","Utilisateurs"]];
+export default function UsersTable({initialUsers,currentUserId}:{initialUsers:UserRow[];currentUserId:string}){
+ const[users,setUsers]=useState(initialUsers),[query,setQuery]=useState(""),[error,setError]=useState("");
+ const filtered=useMemo(()=>users.filter(user=>`${user.name} ${user.email} ${user.institution}`.toLowerCase().includes(query.toLowerCase())),[users,query]);
+ async function update(id:string,data:Record<string,unknown>){setError("");const response=await fetch("/api/admin/users",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({id,...data})});const result=await response.json();if(!response.ok){setError(result.error||"Erreur");return}setUsers(current=>current.map(user=>user.id===id?{...user,...result.user}:user))}
+ function toggle(user:UserRow,permission:string,enabled:boolean){const permissions=enabled?Array.from(new Set([...user.permissions,permission])):user.permissions.filter(item=>item!==permission);const deniedPermissions=enabled?user.deniedPermissions.filter(item=>item!==permission):Array.from(new Set([...user.deniedPermissions,permission]));void update(user.id,{permissions,deniedPermissions})}
+ return <div className="space-y-4"><div className="relative max-w-md"><Search className="absolute left-3 top-3 text-nihary-gris" size={17}/><input className="input pl-10" value={query} onChange={event=>setQuery(event.target.value)} placeholder="Rechercher un membre…"/></div>{error&&<p className="text-sm text-red-700">{error}</p>}<div className="space-y-3">{filtered.map(user=><article className="card p-4 sm:p-5" key={user.id}><div className="flex flex-col gap-4 lg:flex-row lg:items-center"><div className="min-w-0 flex-1"><div className="flex items-center gap-2"><p className="truncate font-medium">{user.name||"Sans nom"}</p>{user.role==="ADMIN"&&<ShieldCheck className="text-nihary-or" size={15}/>}</div><p className="truncate text-xs text-nihary-gris">{user.email} · {user.institution||"Institution non renseignée"}</p></div><select className="input !w-full sm:!w-auto" value={user.role} onChange={event=>void update(user.id,{role:event.target.value})} disabled={user.id===currentUserId}>{ROLES.map(role=><option key={role}>{role}</option>)}</select><button className={`text-sm ${user.suspended?"text-green-700":"text-red-700"}`} disabled={user.id===currentUserId} onClick={()=>void update(user.id,{suspended:!user.suspended})}>{user.suspended?"Réactiver":"Suspendre"}</button></div><details className="mt-4 border-t border-nihary-sable-fonce pt-3"><summary className="flex cursor-pointer list-none items-center justify-between text-sm font-medium"><span>{user.effectivePermissions.length} autorisation(s) active(s)</span><ChevronDown size={16}/></summary><div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{CAPABILITIES.map(([permission,label])=><label key={permission} className="flex items-center gap-2 rounded-md bg-nihary-sable/60 px-3 py-2 text-xs"><input type="checkbox" className="accent-nihary-or" checked={user.effectivePermissions.includes(permission)} disabled={user.id===currentUserId} onChange={event=>toggle(user,permission,event.target.checked)}/>{label}</label>)}</div></details></article>)}</div></div>;
 }

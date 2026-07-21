@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth/config";
 import { hasCompleteProfile, incompleteProfileResponse } from "@/lib/auth/profile-completeness";
 import { missingEvidenceResponse, submissionEvidence } from "@/lib/submission-evidence";
+import { forbiddenPermissionResponse, hasPermission } from "@/lib/auth/permissions";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,6 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!await hasCompleteProfile(session.user.id)) return NextResponse.json(incompleteProfileResponse, { status: 403 });
+    if (!await hasPermission(session.user.id, "MANAGE_EXPERT_PROFILE")) return NextResponse.json(forbiddenPermissionResponse, { status: 403 });
     const existing = await prisma.expertProfile.findUnique({
       where: { userId: session.user.id },
     });
