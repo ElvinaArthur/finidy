@@ -4,7 +4,47 @@ import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth/config";
 import { hasCompleteProfile, incompleteProfileResponse } from "@/lib/auth/profile-completeness";
+import { hasValidFileSignature } from "@/lib/file-validation";
+import { audit, rateLimit, requestFingerprint } from "@/lib/security";
+
 export const runtime = "nodejs";
-const rules = { submissionThumbnail: { max: 5 * 1024 * 1024, mime: ["image/jpeg", "image/png", "image/webp"] }, submissionCv: { max: 10 * 1024 * 1024, mime: ["application/pdf"] }, submissionContent: { max: 50 * 1024 * 1024, mime: ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain", "image/jpeg", "image/png", "image/webp", "audio/mpeg", "audio/mp4", "audio/wav", "video/mp4", "video/webm"] } } as const;
-const extensions: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "application/pdf": "pdf", "application/msword": "doc", "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx", "text/plain": "txt", "audio/mpeg": "mp3", "audio/mp4": "m4a", "audio/wav": "wav", "video/mp4": "mp4", "video/webm": "webm" };
-export async function POST(request: NextRequest) { try { const session = await auth(); if (!session?.user?.id) return NextResponse.json({ error: "Connexion requise" }, { status: 401 }); if (!await hasCompleteProfile(session.user.id)) return NextResponse.json(incompleteProfileResponse, { status: 403 }); const data = await request.formData(); const auteurs = String(data.get("submissionAuthors") || "").trim(); if (auteurs.length < 3 || data.get("submissionDeclaration") !== "accepted") return NextResponse.json({ error: "Auteurs et déclaration sur l’honneur sont obligatoires" }, { status: 400 }); const saved: Record<string, { url: string; name: string; mime: string }> = {}; for (const [field, rule] of Object.entries(rules)) { const value = data.get(field); if (!(value instanceof File) || value.size === 0) return NextResponse.json({ error: `Fichier obligatoire manquant : ${field}` }, { status: 400 }); if (value.size > rule.max || !(rule.mime as readonly string[]).includes(value.type)) return NextResponse.json({ error: `Format ou taille non autorisé pour ${value.name}` }, { status: 400 }); const filename = `${Date.now()}-${randomUUID()}.${extensions[value.type]}`; const isThumbnail = field === "submissionThumbnail"; const directory = isThumbnail ? path.join(process.cwd(), "public", "uploads", "submission-thumbnails", session.user.id) : path.join(process.cwd(), "storage", "submissions", session.user.id); await mkdir(directory, { recursive: true }); await writeFile(path.join(directory, filename), Buffer.from(await value.arrayBuffer()), { flag: "wx" }); saved[field] = { url: isThumbnail ? `/uploads/submission-thumbnails/${session.user.id}/${filename}` : `/api/submission-files/${session.user.id}/${filename}`, name: value.name.slice(0, 240), mime: value.type }; } return NextResponse.json({ evidence: { auteurs, thumbnailUrl: saved.submissionThumbnail.url, cvUrl: saved.submissionCv.url, contentUrl: saved.submissionContent.url, contentName: saved.submissionContent.name, contentMime: saved.submissionContent.mime, declarationAcceptedAt: new Date().toISOString(), declarationVersion: "FINIDY-DROITS-2026-01" } }); } catch (error) { console.error("POST /api/uploads/submission", error); return NextResponse.json({ error: "Téléversement impossible" }, { status: 500 }); } }
+const rules = {
+  submissionThumbnail: { max: 5 * 1024 * 1024, mime: ["image/jpeg", "image/png", "image/webp"] },
+  submissionCv: { max: 10 * 1024 * 1024, mime: ["application/pdf"] },
+  submissionContent: { max: 50 * 1024 * 1024, mime: ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain", "image/jpeg", "image/png", "image/webp", "audio/mpeg", "audio/mp4", "audio/wav", "video/mp4", "video/webm"] },
+} as const;
+const extensions: Record<string, string> = { "image/jpeg":"jpg", "image/png":"png", "image/webp":"webp", "application/pdf":"pdf", "application/msword":"doc", "application/vnd.openxmlformats-officedocument.wordprocessingml.document":"docx", "text/plain":"txt", "audio/mpeg":"mp3", "audio/mp4":"m4a", "audio/wav":"wav", "video/mp4":"mp4", "video/webm":"webm" };
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) return NextResponse.json({ error: "Connexion requise" }, { status: 401 });
+    const limited = await rateLimit("submission.upload", `${session.user.id}:${requestFingerprint(request)}`, 10, 60 * 60);
+    if (!limited.allowed) return NextResponse.json({ error: "Limite de téléversement atteinte. Réessayez plus tard." }, { status: 429, headers: { "Retry-After": String(limited.retryAfter) } });
+    if (!await hasCompleteProfile(session.user.id)) return NextResponse.json(incompleteProfileResponse, { status: 403 });
+
+    const data = await request.formData();
+    const auteurs = String(data.get("submissionAuthors") || "").trim();
+    if (auteurs.length < 3 || data.get("submissionDeclaration") !== "accepted") return NextResponse.json({ error: "Auteurs et déclaration sur l’honneur sont obligatoires" }, { status: 400 });
+
+    const saved: Record<string, { url:string; name:string; mime:string }> = {};
+    for (const [field, rule] of Object.entries(rules)) {
+      const value = data.get(field);
+      if (!(value instanceof File) || value.size === 0) return NextResponse.json({ error: `Fichier obligatoire manquant : ${field}` }, { status: 400 });
+      if (value.size > rule.max || !(rule.mime as readonly string[]).includes(value.type)) return NextResponse.json({ error: `Format ou taille non autorisé pour ${value.name}` }, { status: 400 });
+      const buffer = Buffer.from(await value.arrayBuffer());
+      if (!hasValidFileSignature(buffer, value.type)) return NextResponse.json({ error: `Le contenu réel de ${value.name} ne correspond pas à son format déclaré` }, { status: 400 });
+      const filename = `${Date.now()}-${randomUUID()}.${extensions[value.type]}`;
+      const isThumbnail = field === "submissionThumbnail";
+      const directory = isThumbnail ? path.join(process.cwd(), "public", "uploads", "submission-thumbnails", session.user.id) : path.join(process.cwd(), "storage", "submissions", session.user.id);
+      await mkdir(directory, { recursive: true });
+      await writeFile(path.join(directory, filename), buffer, { flag: "wx" });
+      saved[field] = { url: isThumbnail ? `/uploads/submission-thumbnails/${session.user.id}/${filename}` : `/api/submission-files/${session.user.id}/${filename}`, name: value.name.slice(0, 240), mime: value.type };
+    }
+    await audit("SUBMISSION_FILES_UPLOADED", session.user.id, null, { contentMime: saved.submissionContent.mime });
+    return NextResponse.json({ evidence: { auteurs, thumbnailUrl:saved.submissionThumbnail.url, cvUrl:saved.submissionCv.url, contentUrl:saved.submissionContent.url, contentName:saved.submissionContent.name, contentMime:saved.submissionContent.mime, declarationAcceptedAt:new Date().toISOString(), declarationVersion:"FINIDY-DROITS-2026-01" } });
+  } catch (error) {
+    console.error("POST /api/uploads/submission", error);
+    return NextResponse.json({ error: "Téléversement impossible" }, { status: 500 });
+  }
+}

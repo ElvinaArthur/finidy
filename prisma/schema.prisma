@@ -98,6 +98,28 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model SecurityEvent {
+  id        String   @id @default(cuid())
+  action    String
+  keyHash   String
+  createdAt DateTime @default(now())
+
+  @@index([action, keyHash, createdAt])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  target    String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([actorId, createdAt])
+  @@index([action, createdAt])
+}
+
 model Opportunity {
   id          String   @id @default(cuid())
   slug        String   @unique

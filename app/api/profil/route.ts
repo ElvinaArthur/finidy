@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs'
 import { auth } from '@/lib/auth/config'
 import { prisma } from '@/lib/prisma'
 import { cleanString, isRecord, stringArray } from '@/lib/api-validation'
+import { audit, rateLimit } from '@/lib/security'
 
 export async function PATCH(req: NextRequest) {
   const session = await auth()
@@ -21,6 +22,16 @@ export async function PATCH(req: NextRequest) {
     }
     const password = typeof body.password === 'string' && body.password ? body.password : null
     if (password && (password.length < 8 || password.length > 128)) return NextResponse.json({ error: 'Le mot de passe doit contenir 8 à 128 caractères' }, { status: 400 })
+    if (password) {
+      const currentPassword = typeof body.currentPassword === 'string' ? body.currentPassword : ''
+      const limited = await rateLimit('profile.password', session.user.id, 5, 60 * 60)
+      if (!limited.allowed) return NextResponse.json({ error: 'Trop de tentatives de changement de mot de passe' }, { status: 429 })
+      const credentials = await prisma.user.findUnique({ where: { id: session.user.id }, select: { password: true } })
+      if (!credentials?.password || !currentPassword || !await bcrypt.compare(currentPassword, credentials.password)) {
+        await audit('PASSWORD_CHANGE_REJECTED', session.user.id, session.user.id)
+        return NextResponse.json({ error: 'Le mot de passe actuel est incorrect' }, { status: 403 })
+      }
+    }
     const user = await prisma.user.update({
       where: { id: session.user.id },
       data: {
@@ -32,6 +43,7 @@ export async function PATCH(req: NextRequest) {
       },
       select: { name: true, institution: true, discipline: true, bio: true, orcid: true, website: true, image: true, titreProfil: true, telephone: true, villeProfil: true, pays: true, linkedin: true, langues: true, expertises: true },
     })
+    await audit(password ? 'PASSWORD_CHANGED' : 'PROFILE_UPDATED', session.user.id, session.user.id)
     return NextResponse.json({ success: true, user })
   } catch (error) {
     console.error('PATCH /api/profil', error)

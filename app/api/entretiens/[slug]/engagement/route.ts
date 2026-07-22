@@ -3,6 +3,7 @@ import { TypeReaction } from "@prisma/client";
 import { auth } from "@/lib/auth/config";
 import { cleanString, enumValue, isRecord } from "@/lib/api-validation";
 import { prisma } from "@/lib/prisma";
+import { audit, rateLimit, requestFingerprint } from "@/lib/security";
 
 async function findEntretien(slug: string) {
   return prisma.entretien.findUnique({ where: { slug, statut: "PUBLIE" }, select: { id: true } });
@@ -64,10 +65,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       if (!currentUser.emailVerified) return NextResponse.json({ error: "Vérifiez votre adresse e-mail pour commenter" }, { status: 403 });
       const contenu = cleanString(body.contenu, 1500);
       if (!contenu) return NextResponse.json({ error: "Le commentaire doit contenir entre 1 et 1 500 caractères" }, { status: 400 });
+      const limited = await rateLimit("entretien.comment", `${currentUser.id}:${requestFingerprint(request)}`, 8, 60 * 60);
+      if (!limited.allowed) return NextResponse.json({ error: "Limite de commentaires atteinte. Réessayez plus tard." }, { status: 429, headers: { "Retry-After": String(limited.retryAfter) } });
       const comment = await prisma.entretienComment.create({
         data: { entretienId: entretien.id, userId: currentUser.id, contenu },
         include: { user: { select: { name: true, image: true, institution: true } } },
       });
+      await audit("COMMENT_CREATED", currentUser.id, comment.id, { entretienId: entretien.id });
       return NextResponse.json({ comment: { ...comment, createdAt: comment.createdAt.toISOString(), updatedAt: comment.updatedAt.toISOString() } }, { status: 201 });
     }
 

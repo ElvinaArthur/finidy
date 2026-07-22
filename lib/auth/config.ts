@@ -2,6 +2,7 @@ import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
+import { audit, rateLimit, requestFingerprint } from '@/lib/security'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: 'jwt' },
@@ -32,10 +33,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: 'Email', type: 'email' },
         password: { label: 'Mot de passe', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         if (!credentials?.email || !credentials?.password) return null
 
         const email = String(credentials.email).trim().toLowerCase()
+        const limited = await rateLimit('auth.login', `${email}:${requestFingerprint(request)}`, 10, 15 * 60)
+        if (!limited.allowed) return null
         const user = await prisma.user.findUnique({
           where: { email },
         })
@@ -46,7 +49,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           credentials.password as string,
           user.password
         )
-        if (!valid) return null
+        if (!valid) {
+          await audit('LOGIN_REJECTED', user.id, user.id)
+          return null
+        }
+
+        await audit('LOGIN_SUCCEEDED', user.id, user.id)
 
         return {
           id: user.id,
