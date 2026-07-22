@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import {
   FileText, Users, ExternalLink, BookOpen,
@@ -8,6 +9,7 @@ import {
 import { prisma } from '@/lib/prisma'
 import { DISCIPLINES_LABELS } from '@/lib/disciplines'
 import PdfViewer from '@/components/shared/PdfViewer'
+import { getRevueThumbnail } from '@/lib/revue-thumbnail'
 
 const LANGUE_LABELS: Record<string, string> = {
   FR: 'Français',
@@ -43,7 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params
   const article = await prisma.articleRevue.findUnique({
     where: { id, statut: 'PUBLIE' },
-    select: { titre: true, resume: true, auteur: { select: { name: true } }, doi: true, motsClés: true },
+    select: { titre: true, resume: true, auteur: { select: { name: true } }, doi: true, motsClés: true, discipline: true, submissionMeta: true },
   })
   if (!article) return { title: 'Article introuvable | FINIDY Research Center' }
   return {
@@ -57,6 +59,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       type: 'article' as const,
       url: `https://finidy.mg/revue/${id}`,
       siteName: 'SAONTSY — FINIDY Research Center',
+      images: [{ url: getRevueThumbnail(article), alt: article.titre }],
     },
     alternates: { canonical: `https://finidy.mg/revue/${id}` },
   }
@@ -170,6 +173,20 @@ export default async function ArticleRevuePage({ params }: { params: Promise<{ i
                 )}
               </span>
             ))}
+          </div>
+
+          <div className="relative mb-7 aspect-[16/8] overflow-hidden rounded-xl border border-nihary-sable-fonce bg-nihary-sable shadow-sm">
+            <Image
+              src={getRevueThumbnail(article)}
+              alt={`Illustration de l’article ${article.titre}`}
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 640px"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-5 pb-4 pt-12">
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/90">SAONTSY · Recherche en accès numérique</span>
+            </div>
           </div>
 
           {/* DOI */}

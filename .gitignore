@@ -6,6 +6,7 @@ dist/
 .DS_Store
 *.log
 storage/submissions/
+public/uploads/submission-thumbnails/
 
 # Les assets de démonstration de public/uploads sont versionnés pour être
 # disponibles dans les clones et les déploiements.

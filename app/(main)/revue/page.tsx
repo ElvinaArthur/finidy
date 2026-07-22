@@ -1,6 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import { BadgeCheck, BookOpen, MapPin, PackageCheck, Plus, ScrollText } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { getRevueThumbnail } from "@/lib/revue-thumbnail";
 
 const DISCIPLINES_LABELS: Record<string, string> = {
   SOCIOLOGIE: "Sociologie",
@@ -97,7 +99,26 @@ export default async function RevuePage() {
       ) : (
         <div className="space-y-4">
           {articles.map((article) => (
-            <div key={article.id} className="card p-6">
+            <article key={article.id} className="card group overflow-hidden">
+              <div className="grid sm:grid-cols-[190px_minmax(0,1fr)]">
+                <Link
+                  href={`/revue/${article.id}`}
+                  className="relative block aspect-[16/9] overflow-hidden bg-nihary-sable sm:aspect-auto sm:min-h-[220px]"
+                  aria-label={`Lire : ${article.titre}`}
+                >
+                  <Image
+                    src={getRevueThumbnail(article)}
+                    alt={`Illustration de l’article ${article.titre}`}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, 190px"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+                  <span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-nihary-ambre-fonce shadow-sm">
+                    Article scientifique
+                  </span>
+                </Link>
+                <div className="p-5 sm:p-6">
               <div className="flex flex-wrap gap-2 mb-2">
                 <span className="badge">
                   {DISCIPLINES_LABELS[article.discipline] || article.discipline}
@@ -127,7 +148,9 @@ export default async function RevuePage() {
                   Lire →
                 </Link>
               </div>
-            </div>
+                </div>
+              </div>
+            </article>
           ))}
         </div>
       )}
