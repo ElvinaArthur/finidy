@@ -5,6 +5,11 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '@/components/layout/Logo'
 
+const DEMO_ACCOUNT = {
+  email: 'test@nihary.mg',
+  password: 'DemoFinidy2026!',
+}
+
 export default function ConnexionPage() {
   const router = useRouter()
   const [form, setForm] = useState({ email: '', password: '' })
@@ -57,6 +62,19 @@ export default function ConnexionPage() {
             <Link href="/auth/inscription" className="text-nihary-or hover:underline">Créer un compte</Link>
           </p>
           <Link href="/" className="mt-3 block text-center text-sm text-nihary-gris hover:text-nihary-or hover:underline">Retour à l’accueil</Link>
+        </div>
+        <div className="mt-5 border-t border-nihary-sable-fonce pt-5 text-center">
+          <p className="mb-3 text-xs text-nihary-gris">Découvrir l’espace Auteur sans créer de compte</p>
+          <button
+            type="button"
+            onClick={() => {
+              setForm(DEMO_ACCOUNT)
+              setError('')
+            }}
+            className="btn-outline w-full justify-center"
+          >
+            Utiliser le compte démo
+          </button>
         </div>
       </div>
     </div>
