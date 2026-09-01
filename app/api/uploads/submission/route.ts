@@ -1,6 +1,5 @@
 import { randomUUID } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
+import { put } from "@vercel/blob";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth/config";
 import { hasCompleteProfile, incompleteProfileResponse } from "@/lib/auth/profile-completeness";
@@ -36,10 +35,9 @@ export async function POST(request: NextRequest) {
       if (!hasValidFileSignature(buffer, value.type)) return NextResponse.json({ error: `Le contenu réel de ${value.name} ne correspond pas à son format déclaré` }, { status: 400 });
       const filename = `${Date.now()}-${randomUUID()}.${extensions[value.type]}`;
       const isThumbnail = field === "submissionThumbnail";
-      const directory = isThumbnail ? path.join(process.cwd(), "public", "uploads", "submission-thumbnails", session.user.id) : path.join(process.cwd(), "storage", "submissions", session.user.id);
-      await mkdir(directory, { recursive: true });
-      await writeFile(path.join(directory, filename), buffer, { flag: "wx" });
-      saved[field] = { url: isThumbnail ? `/uploads/submission-thumbnails/${session.user.id}/${filename}` : `/api/submission-files/${session.user.id}/${filename}`, name: value.name.slice(0, 240), mime: value.type };
+      const pathname = isThumbnail ? `submission-thumbnails/${session.user.id}/${filename}` : `submissions/${session.user.id}/${filename}`;
+      const blob = await put(pathname, buffer, { access: isThumbnail ? "public" : "private", contentType: value.type, addRandomSuffix: false });
+      saved[field] = { url: isThumbnail ? blob.url : `/api/submission-files/${session.user.id}/${filename}`, name: value.name.slice(0, 240), mime: value.type };
     }
     await audit("SUBMISSION_FILES_UPLOADED", session.user.id, null, { contentMime: saved.submissionContent.mime });
     return NextResponse.json({ evidence: { auteurs, thumbnailUrl:saved.submissionThumbnail.url, cvUrl:saved.submissionCv.url, contentUrl:saved.submissionContent.url, contentName:saved.submissionContent.name, contentMime:saved.submissionContent.mime, declarationAcceptedAt:new Date().toISOString(), declarationVersion:"FINIDY-DROITS-2026-01" } });

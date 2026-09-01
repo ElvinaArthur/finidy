@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs'
 import { audit, rateLimit, requestFingerprint } from '@/lib/security'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   session: { strategy: 'jwt' },
   pages: {
     signIn: '/auth/connexion',
@@ -14,7 +15,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
-        token.role = (user as any).role
+      }
+      if (token.id) {
+        const current = await prisma.user.findUnique({ where: { id: token.id as string }, select: { role: true, suspended: true, permissions: true, deniedPermissions: true, emailVerified: true } })
+        if (!current || current.suspended) { token.disabled = true; return token }
+        token.disabled = false
+        token.role = current.role
+        token.permissions = current.permissions
+        token.deniedPermissions = current.deniedPermissions
+        token.emailVerified = current.emailVerified?.toISOString() || null
       }
       return token
     },
@@ -22,6 +31,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (token) {
         session.user.id = token.id as string
         ;(session.user as any).role = token.role
+        ;(session.user as any).permissions = token.permissions
+        ;(session.user as any).deniedPermissions = token.deniedPermissions
+        ;(session.user as any).emailVerified = token.emailVerified
+        if (token.disabled) return null as any
       }
       return session
     },

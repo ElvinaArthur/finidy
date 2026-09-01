@@ -29,7 +29,7 @@ export default function ConnexionPage() {
     <div className="min-h-screen bg-nihary-sable flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Logo size="lg" />
+          <Link href="/" aria-label="Retour à l’accueil" className="inline-block"><Logo size="lg" /></Link>
           <p className="text-nihary-gris font-body mt-3">Connexion à votre espace auteur</p>
         </div>
         <div className="card p-8">
@@ -50,11 +50,13 @@ export default function ConnexionPage() {
             <button type="submit" disabled={loading} className="btn-primary w-full justify-center">
               {loading ? 'Connexion...' : 'Se connecter'}
             </button>
+            <Link href="/auth/mot-de-passe-oublie" className="block text-right text-sm text-nihary-or hover:underline">Mot de passe oublié ?</Link>
           </form>
           <p className="text-center text-sm text-nihary-gris font-body mt-4">
             Pas encore de compte ?{' '}
             <Link href="/auth/inscription" className="text-nihary-or hover:underline">Créer un compte</Link>
           </p>
+          <Link href="/" className="mt-3 block text-center text-sm text-nihary-gris hover:text-nihary-or hover:underline">Retour à l’accueil</Link>
         </div>
       </div>
     </div>

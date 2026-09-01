@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { cleanString, isEmail, isRecord } from '@/lib/api-validation'
 import { audit, rateLimit, requestFingerprint } from '@/lib/security'
+import { sendVerificationEmail } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,8 +15,8 @@ export async function POST(req: NextRequest) {
     const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
     const password = typeof body.password === 'string' ? body.password : ''
     const institution = body.institution ? cleanString(body.institution, 200) : null
-    if (!name || !isEmail(email) || password.length < 8 || password.length > 128) {
-      return NextResponse.json({ error: 'Nom, email valide et mot de passe de 8 à 128 caractères requis' }, { status: 400 })
+    if (!name || !isEmail(email) || password.length < 10 || password.length > 128) {
+      return NextResponse.json({ error: 'Nom, email valide et mot de passe de 10 à 128 caractères requis' }, { status: 400 })
     }
     const exists = await prisma.user.findUnique({ where: { email } })
     if (exists) {
@@ -26,7 +27,9 @@ export async function POST(req: NextRequest) {
       data: { name, email, password: hashed, institution, role: 'AUTEUR' },
     })
     await audit('USER_REGISTERED', user.id, user.id)
-    return NextResponse.json({ success: true, id: user.id }, { status: 201 })
+    let emailSent = true
+    try { await sendVerificationEmail(user.email) } catch (error) { emailSent = false; console.error('Verification email', error) }
+    return NextResponse.json({ success: true, id: user.id, emailSent }, { status: 201 })
   } catch (error) {
     console.error(error)
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })

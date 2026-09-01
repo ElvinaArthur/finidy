@@ -4,10 +4,11 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, BriefcaseBusiness, CalendarDays, CheckCircle2, Clock3, GraduationCap, Mail, MapPin, WalletCards } from "lucide-react";
 import { getOffre, offres, OFFRE_TYPE_LABELS, opportunityToOffre } from "@/lib/offres";
 import { prisma } from "@/lib/prisma";
+import { absoluteUrl } from "@/lib/site";
 
 export function generateStaticParams() { return offres.map((offre) => ({ slug: offre.slug })); }
 async function loadOffre(slug:string){const local=getOffre(slug);if(local)return local;try{const row=await prisma.opportunity.findFirst({where:{slug,statut:"PUBLIE"}});return row?opportunityToOffre(row):undefined}catch{return undefined}}
-export async function generateMetadata({ params }: { params: { slug: string } }) { const offre = await loadOffre(params.slug); return offre ? { title: `${offre.titre} | Offres FINIDY`, description: offre.resume } : {}; }
+export async function generateMetadata({ params }: { params: { slug: string } }) { const offre = await loadOffre(params.slug); return offre ? { title: `${offre.titre} | Offres FINIDY`, description: offre.resume, alternates:{canonical:absoluteUrl(`/consultance/offres/${offre.slug}`)}, openGraph:{title:offre.titre,description:offre.resume,type:"website" as const,url:absoluteUrl(`/consultance/offres/${offre.slug}`),images:[offre.image]} } : {}; }
 const info = (label: string, value: string, Icon: typeof MapPin) => <div className="flex gap-3"><Icon className="mt-0.5 shrink-0 text-nihary-or" size={18} /><div><dt className="text-xs uppercase tracking-wide text-nihary-gris">{label}</dt><dd className="mt-0.5 text-sm font-medium">{value || "N/A"}</dd></div></div>;
 
 export default async function OffrePage({ params }: { params: { slug: string } }) {

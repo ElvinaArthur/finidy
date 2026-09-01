@@ -21,7 +21,7 @@ export async function PATCH(req: NextRequest) {
       if (value) { try { const url = new URL(value); if (url.protocol !== 'https:') throw new Error() } catch { return NextResponse.json({ error: 'Les URL doivent être valides et sécurisées (https)' }, { status: 400 }) } }
     }
     const password = typeof body.password === 'string' && body.password ? body.password : null
-    if (password && (password.length < 8 || password.length > 128)) return NextResponse.json({ error: 'Le mot de passe doit contenir 8 à 128 caractères' }, { status: 400 })
+    if (password && (password.length < 10 || password.length > 128)) return NextResponse.json({ error: 'Le mot de passe doit contenir 10 à 128 caractères' }, { status: 400 })
     if (password) {
       const currentPassword = typeof body.currentPassword === 'string' ? body.currentPassword : ''
       const limited = await rateLimit('profile.password', session.user.id, 5, 60 * 60)

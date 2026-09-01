@@ -1,10 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverActions: { allowedOrigins: ["localhost:3000", "finidy.vercel.app", "finidy.mg", "www.finidy.mg"] },
+    serverActions: { allowedOrigins: ["localhost:3000", "finidy.mg", "www.finidy.mg"] },
   },
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "**.supabase.co" }],
+    remotePatterns: [
+      { protocol: "https", hostname: "**.public.blob.vercel-storage.com" },
+      { protocol: "https", hostname: "**.supabase.co" },
+    ],
   },
   eslint: {
     ignoreDuringBuilds: true,

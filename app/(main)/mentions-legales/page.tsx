@@ -74,8 +74,11 @@ export default function MentionsLegalesPage() {
             Cookies
           </h2>
           <p>
-            Ce site utilise des cookies techniques nécessaires à son fonctionnement (session
-            d'authentification). Aucun cookie publicitaire ou de traçage tiers n'est utilisé.
+            Ce site utilise des cookies ou stockages techniques nécessaires à son fonctionnement,
+            notamment pour la session d'authentification et la mémorisation de vos choix. Les
+            catégories optionnelles (préférences, mesure d'audience et communication) sont
+            désactivées tant que vous ne les acceptez pas. Vous pouvez modifier ou retirer votre
+            consentement à tout moment depuis « Paramètres des cookies » dans le pied de page.
           </p>
         </section>
 

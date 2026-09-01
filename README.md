@@ -29,11 +29,10 @@ npm run dev
 
 Voir `DEPLOY.md` pour le guide complet étape par étape.
 
-## Compte admin
+## Compte administrateur
 
-- Email : `niharyadmin.mg`
-- Mot de passe initial : `NiharyAdmin2024!`
-- **À changer immédiatement après le premier déploiement**
+Le premier compte administrateur est créé à partir de `SEED_ADMIN_EMAIL` et
+`SEED_ADMIN_PASSWORD`. Aucun identifiant par défaut n'est conservé dans le dépôt.
 
 ## 7 piliers
 

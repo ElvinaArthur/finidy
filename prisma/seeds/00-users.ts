@@ -4,20 +4,25 @@
  */
 import { prisma } from "./_client";
 import bcrypt from "bcryptjs";
+import { randomBytes } from "crypto";
 
 export async function seedUsers() {
   console.log("👤 Création des utilisateurs...");
 
   const hash = async (pw: string) => bcrypt.hash(pw, 12);
+  const adminEmail = process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase();
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+  if (!adminEmail || !adminPassword || adminPassword.length < 14) throw new Error("SEED_ADMIN_EMAIL et SEED_ADMIN_PASSWORD (14 caractères minimum) sont requis");
+  const demoPassword = randomBytes(32).toString("base64url");
 
   // ── ADMIN ──────────────────────────────────────────────────────────────────
   const admin = await prisma.user.upsert({
-    where: { email: "admin@nihary.mg" },
+    where: { email: adminEmail },
     update: { emailVerified: new Date() },
     create: {
-      email: "admin@nihary.mg",
+      email: adminEmail,
       name: "Équipe FINIDY Research Center",
-      password: await hash("NiharyAdmin2024!"),
+      password: await hash(adminPassword),
       role: "ADMIN",
       emailVerified: new Date(),
       institution: "FINIDY Research Center — Plateforme SHS Madagascar",
@@ -32,7 +37,7 @@ export async function seedUsers() {
     create: {
       email: "test@nihary.mg",
       name: "Compte Test",
-      password: await hash("TestNihary2024!"),
+      password: await hash(demoPassword),
       role: "AUTEUR",
       emailVerified: new Date(),
       institution: "Université d'Antananarivo",
@@ -104,13 +109,13 @@ export async function seedUsers() {
     const user = await prisma.user.upsert({
       where: { email: a.email },
       update: { image: a.image, emailVerified: new Date() },
-      create: { ...a, emailVerified: new Date(), password: await hash("Nihary2024!") },
+      create: { ...a, emailVerified: new Date(), password: await hash(demoPassword) },
     });
     createdAuteurs[a.email] = user;
   }
 
   console.log(`   ✅ Admin          : ${admin.email}`);
-  console.log(`   ✅ Compte test    : ${testUser.email} / TestNihary2024!`);
+  console.log(`   ✅ Compte test    : ${testUser.email} (secret aléatoire non affiché)`);
   console.log(`   ✅ Auteurs fictifs : ${Object.keys(createdAuteurs).length}`);
 
   return { admin, testUser, auteurs: createdAuteurs };

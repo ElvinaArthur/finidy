@@ -5,10 +5,8 @@
  * Usage :
  *   npm run db:seed
  *
- * Comptes créés :
- *   Admin    → admin@nihary.mg        / NiharyAdmin2024!
- *   Test     → test@nihary.mg         / TestNihary2024!
- *   Auteurs  → *@*                    / Nihary2024!
+ * L'administrateur initial est défini uniquement via SEED_ADMIN_EMAIL et
+ * SEED_ADMIN_PASSWORD. Les comptes de démonstration reçoivent un secret aléatoire.
  */
 import { config } from "dotenv";
 config({ path: ".env.local" });
@@ -39,7 +37,7 @@ async function main() {
 
   // Map email → id pour tous les auteurs
   const auteurIds: Record<string, string> = {
-    "admin@nihary.mg": admin.id,
+    [process.env.SEED_ADMIN_EMAIL!.trim().toLowerCase()]: admin.id,
     "test@nihary.mg": testUser.id,
   };
   for (const [email, user] of Object.entries(auteurs)) {
@@ -70,11 +68,7 @@ async function main() {
   console.log("\n╔══════════════════════════════════════════╗");
   console.log("║        ✅  Seed terminé avec succès !    ║");
   console.log("╚══════════════════════════════════════════╝");
-  console.log("\n📋 Comptes de test :");
-  console.log("   Admin  → admin@nihary.mg      | NiharyAdmin2024!");
-  console.log("   Test   → test@nihary.mg       | TestNihary2024!");
-  console.log("   Auteur → jean.rakoto@...      | Nihary2024!");
-  console.log("\n🚀 Lancez le serveur : npm run dev\n");
+  console.log("\n✅ Aucun mot de passe n'a été affiché dans les journaux.\n");
 }
 
 main()

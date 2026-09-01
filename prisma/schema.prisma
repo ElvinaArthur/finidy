@@ -545,6 +545,16 @@ model Notification {
   @@index([userId, lue, createdAt])
 }
 
+model NewsletterSubscriber {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  confirmedAt DateTime?
+  consentAt   DateTime
+  source      String    @default("popup")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
 enum EditorialRequestKind {
   RETRAIT
   QUESTION

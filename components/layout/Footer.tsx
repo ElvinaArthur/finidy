@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { PILIERS } from '@/lib/piliers'
+import CookieSettingsButton from '@/components/privacy/CookieSettingsButton'
+import NewsletterForm from '@/components/newsletter/NewsletterForm'
 
 export default function Footer() {
   const year = new Date().getFullYear()
@@ -108,6 +110,7 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
+            <div className="mt-2"><CookieSettingsButton /></div>
           </div>
 
           {/* Rejoindre */}
@@ -131,6 +134,13 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+
+        <div className="mt-10 rounded-2xl border border-nihary-ambre/30 bg-white/5 p-5 sm:p-6">
+          <div className="grid gap-5 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+            <div><h3 className="font-display text-lg font-semibold text-nihary-or">La lettre FINIDY</h3><p className="mt-1 text-sm text-nihary-gris-clair">Publications, appels et événements directement dans votre boîte mail.</p></div>
+            <NewsletterForm source="footer" />
           </div>
         </div>
 

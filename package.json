@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && tsx scripts/check-database.ts && next build",
+    "db:check": "tsx scripts/check-database.ts",
+    "test:roles": "tsx scripts/test-role-matrix.ts",
     "start": "next start",
     "lint": "eslint app components lib --ext .ts,.tsx",
     "db:push": "prisma db push",
@@ -14,6 +16,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "7.8.0",
+    "@vercel/blob": "^2.8.0",
     "bcryptjs": "2.4.3",
     "lucide-react": "^1.21.0",
     "next": "14.2.18",

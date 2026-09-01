@@ -2,12 +2,13 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/config";
 import { prisma } from "@/lib/prisma";
 import CrmBoard from "@/components/admin/CrmBoard";
+import { hasPermission } from "@/lib/auth/permissions";
 
 const profileFields = ["name", "institution", "discipline", "bio", "titreProfil", "telephone", "villeProfil", "pays"] as const;
 
 export default async function Page() {
   const session = await auth();
-  if ((session?.user as { role?: string } | undefined)?.role !== "ADMIN") redirect("/dashboard");
+  if (!session?.user?.id || !await hasPermission(session.user.id, "VIEW_CRM")) redirect("/dashboard");
 
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);

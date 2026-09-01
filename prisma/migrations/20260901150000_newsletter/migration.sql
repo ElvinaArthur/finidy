@@ -1,0 +1,11 @@
+CREATE TABLE "NewsletterSubscriber" (
+  "id" TEXT NOT NULL,
+  "email" TEXT NOT NULL,
+  "confirmedAt" TIMESTAMP(3),
+  "consentAt" TIMESTAMP(3) NOT NULL,
+  "source" TEXT NOT NULL DEFAULT 'popup',
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL,
+  CONSTRAINT "NewsletterSubscriber_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX "NewsletterSubscriber_email_key" ON "NewsletterSubscriber"("email");

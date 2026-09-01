@@ -1,8 +1,8 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
 import { MEMBRES_COMMUNAUTE } from '@/lib/communaute-scientifique'
-
-const BASE_URL = 'https://finidy.mg'
+import { offres } from '@/lib/offres'
+import { SITE_URL as BASE_URL } from '@/lib/site'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
@@ -26,6 +26,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/universite-populaire`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 },
     { url: `${BASE_URL}/consultance`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${BASE_URL}/consultance/offres`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 },
+    ...offres.map((offre) => ({ url: `${BASE_URL}/consultance/offres/${offre.slug}`, lastModified: new Date(offre.datePublication), changeFrequency: 'weekly' as const, priority: 0.7 })),
+    { url: `${BASE_URL}/recherche`, lastModified: now, changeFrequency: 'weekly', priority: 0.6 },
     { url: `${BASE_URL}/a-propos`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE_URL}/contact`, lastModified: now, changeFrequency: 'yearly', priority: 0.4 },
     { url: `${BASE_URL}/politique-editoriale`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
@@ -46,6 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       select: { slug: true, createdAt: true },
     }).catch(() => []),
     prisma.livre.findMany({
+      where: { statut: 'PUBLIE' },
       select: { slug: true, createdAt: true },
     }).catch(() => []),
     prisma.colloque.findMany({
@@ -56,6 +59,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       select: { slug: true, createdAt: true },
     }).catch(() => []),
   ])
+
+  const opportunities = await prisma.opportunity.findMany({ where: { statut: 'PUBLIE' }, select: { slug: true, updatedAt: true } }).catch(() => [])
 
   const dynamicRoutes: MetadataRoute.Sitemap = [
     ...articles.map((a) => ({
@@ -93,6 +98,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: c.createdAt,
       changeFrequency: 'monthly' as const,
       priority: 0.6,
+    })),
+    ...opportunities.filter((item) => !offres.some((offre) => offre.slug === item.slug)).map((item) => ({
+      url: `${BASE_URL}/consultance/offres/${item.slug}`,
+      lastModified: item.updatedAt,
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
     })),
   ]
 

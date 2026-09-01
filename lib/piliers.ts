@@ -29,7 +29,7 @@ export const PILIERS: PilierMeta[] = [
     label: "SAONTSY",
     icon: ScrollText,
     href: "/revue",
-    description: "Le Malgache dans tous ses états — contributions des chercheurs",
+    description: "Revue trimestrielle de recherches sur Madagascar, évaluées par les pairs",
     sousLiens: [
       { label: "Articles scientifiques", href: "/revue" },
       { label: "Comité scientifique", href: "/revue/comite" },
@@ -43,7 +43,7 @@ export const PILIERS: PilierMeta[] = [
     label: "Consultance",
     icon: Handshake,
     href: "/consultance",
-    description: "Mise en relation avec des experts SHS",
+    description: "Étude, mise en œuvre et évaluation mobilisant les compétences en SHS",
     sousLiens: [
       { label: "Trouver un expert", href: "/consultance" },
       { label: "Offres de recherche", href: "/consultance/offres" },
@@ -56,7 +56,7 @@ export const PILIERS: PilierMeta[] = [
     label: "Magazine",
     icon: PenLine,
     href: "/magazine",
-    description: "Vulgarisation et actualité en SHS",
+    description: "Observatoire mensuel et décryptage de la réalité de la société malgache",
     sousLiens: [
       { label: "Tous les articles", href: "/magazine" },
       { label: "Proposer un article", href: "/magazine/proposer" },
@@ -64,10 +64,10 @@ export const PILIERS: PilierMeta[] = [
   },
   {
     id: "entretiens",
-    label: "Entretiens",
+    label: "FINIDY Média",
     icon: Mic,
     href: "/entretiens",
-    description: "Podcasts, vidéos et textes avec des chercheurs",
+    description: "Podcasts, documentaires, conférences et webinaires scientifiques",
     sousLiens: [
       { label: "Tous les entretiens", href: "/entretiens" },
       { label: "Podcasts", href: "/entretiens?format=PODCAST" },
@@ -77,10 +77,10 @@ export const PILIERS: PilierMeta[] = [
   },
   {
     id: "editions",
-    label: "Édition",
+    label: "Édition FINIDY",
     icon: BookOpen,
     href: "/editions",
-    description: "Librairie et soumission de manuscrits",
+    description: "Savoirs scientifiques, œuvres littéraires et accompagnement rédactionnel",
     sousLiens: [
       { label: "Catalogue", href: "/editions" },
       { label: "Soumettre un manuscrit", href: "/editions/soumettre" },
@@ -88,10 +88,10 @@ export const PILIERS: PilierMeta[] = [
   },
   {
     id: "colloques",
-    label: "Colloques",
+    label: "Colloque international",
     icon: Landmark,
     href: "/colloques",
-    description: "Colloques internationaux en SHS",
+    description: "Débat scientifique annuel sur les enjeux structurels de la société malgache",
     sousLiens: [
       { label: "Prochains colloques", href: "/colloques" },
       { label: "Appel à communications", href: "/colloques/appel" },
@@ -101,10 +101,10 @@ export const PILIERS: PilierMeta[] = [
   },
   {
     id: "universite-populaire",
-    label: "Univ. Populaire",
+    label: "Université populaire",
     icon: GraduationCap,
     href: "/universite-populaire",
-    description: "Cours en ligne ouverts en SHS",
+    description: "Conférences et actions inclusives pour cultiver l’esprit critique citoyen",
     sousLiens: [
       { label: "Tous les cours", href: "/universite-populaire" },
       { label: "Sessions live", href: "/universite-populaire/live" },

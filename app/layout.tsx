@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import SessionProvider from '@/components/SessionProvider'
-
-const SITE_URL = 'https://finidy.mg'
+import { SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -21,6 +20,7 @@ export const metadata: Metadata = {
   creator: 'FINIDY Research Center',
   publisher: 'FINIDY Research Center',
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
+  verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
   alternates: { canonical: SITE_URL },
   openGraph: {
     siteName: 'FINIDY Research Center',
@@ -29,6 +29,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     title: 'FINIDY Research Center — Plateforme SHS Madagascar',
     description: "Plateforme de référence en Sciences Humaines et Sociales de Madagascar et de l'Océan Indien.",
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'FINIDY Research Center — Sciences humaines et sociales' }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -36,6 +37,7 @@ export const metadata: Metadata = {
     creator: '@FINIDY_RC',
     title: 'FINIDY Research Center',
     description: "Plateforme de référence en Sciences Humaines et Sociales de Madagascar.",
+    images: ['/opengraph-image'],
   },
   manifest: '/manifest.json',
   icons: { icon: '/favicon.ico' },
@@ -60,6 +62,19 @@ const orgJsonLd = {
   },
 }
 
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'FINIDY Research Center',
+  url: SITE_URL,
+  inLanguage: 'fr',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${SITE_URL}/recherche?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
@@ -68,6 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
         />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

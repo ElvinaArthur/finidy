@@ -1,113 +1,29 @@
-import Link from "next/link";
+import Link from 'next/link'
+import { SITE_URL } from '@/lib/site'
 
 export const metadata = {
-  title: "À propos | FINIDY Research Center",
-  description:
-    "Découvrez la mission et la vision du FINIDY Research Center — « Celui qui contemple » — centre de référence en Sciences Humaines et Sociales de Madagascar et de l'Océan Indien.",
-  openGraph: {
-    title: "À propos — FINIDY Research Center",
-    description: "Mission et vision du FINIDY Research Center, centre SHS de référence à Madagascar.",
-    type: 'website' as const,
-    url: 'https://finidy.mg/a-propos',
-  },
-  alternates: { canonical: 'https://finidy.mg/a-propos' },
-};
-
-export default function AProposPage() {
-  return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <span className="eyebrow">À propos</span>
-      <h1 className="font-display font-bold text-display-md text-nihary-ambre-fonce mt-1 mb-6">
-        FINIDY Research Center — Celui qui contemple
-      </h1>
-
-      <div className="divider-or" />
-
-      <div className="prose-nihary text-nihary-brun space-y-8 mt-8">
-        <section>
-          <h2 className="font-display font-semibold text-xl text-nihary-ambre-fonce mb-3">
-            Notre mission
-          </h2>
-          <p>
-            FINIDY Research Center est une plateforme de publication et de valorisation des Sciences Humaines et
-            Sociales (SHS) ancrée à Madagascar, ouverte sur l'Océan Indien et l'Afrique. Notre
-            mission est de fournir aux chercheurs, auteurs et praticiens un écosystème scientifique
-            complet, rigoureux et accessible.
-          </p>
-          <p>
-            Le nom FINIDY, qui signifie <em>celui qui contemple</em> en malgache, reflète notre
-            engagement pour une science qui observe, réfléchit et engage le dialogue entre les
-            disciplines et les cultures.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-display font-semibold text-xl text-nihary-ambre-fonce mb-3">
-            Sept piliers, un projet commun
-          </h2>
-          <p>
-            FINIDY Research Center structure son action autour de sept piliers complémentaires qui couvrent
-            l'ensemble du cycle de la connaissance en SHS :
-          </p>
-          <ul className="list-disc pl-6 space-y-1 text-nihary-brun font-body">
-            <li>
-              <strong>La Revue scientifique</strong> — publication peer-reviewed en accès libre
-            </li>
-            <li>
-              <strong>La Consultance</strong> — mise en relation entre experts et organisations
-            </li>
-            <li>
-              <strong>Le Magazine</strong> — vulgarisation et actualité scientifique
-            </li>
-            <li>
-              <strong>Les Entretiens</strong> — podcasts, vidéos et entretiens avec des chercheurs
-            </li>
-            <li>
-              <strong>L'Édition</strong> — publication d'ouvrages et manuscrits
-            </li>
-            <li>
-              <strong>Les Colloques</strong> — organisation et soutien aux conférences internationales
-            </li>
-            <li>
-              <strong>L'Université Populaire</strong> — formations en ligne gratuites
-            </li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="font-display font-semibold text-xl text-nihary-ambre-fonce mb-3">
-            Notre ancrage régional
-          </h2>
-          <p>
-            FINIDY Research Center est fondé à Antananarivo, Madagascar. Nous accordons une attention particulière
-            aux savoirs produits dans l'Océan Indien, en Afrique subsaharienne et dans la diaspora
-            malgache, tout en maintenant des standards scientifiques internationaux.
-          </p>
-          <p>
-            Les publications sont acceptées en français, en malgache et en anglais, afin de refléter
-            la diversité linguistique de notre espace géographique et intellectuel.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-display font-semibold text-xl text-nihary-ambre-fonce mb-3">
-            Rejoindre FINIDY Research Center
-          </h2>
-          <p>
-            FINIDY Research Center est ouvert à tous les chercheurs, auteurs, experts et passionnés de sciences
-            humaines et sociales. Vous pouvez contribuer en soumettant un article, en proposant un
-            cours, en rejoignant notre réseau d'experts ou simplement en vous inscrivant comme lecteur.
-          </p>
-          <div className="flex flex-wrap gap-3 mt-4">
-            <Link href="/auth/inscription" className="btn-primary">
-              Créer un compte
-            </Link>
-            <Link href="/contact" className="btn-outline">
-              Nous contacter
-            </Link>
-          </div>
-        </section>
-      </div>
-    </div>
-  );
+  title:'À propos de FINIDY Research Center | Recherche à Madagascar',
+  description:"FINIDY Research Center est un écosystème de recherche et d’engagement citoyen consacré au devenir, au bien-être et au rayonnement de la société malgache.",
+  keywords:['FINIDY Research Center','centre de recherche Madagascar','sciences humaines et sociales Madagascar','recherche scientifique malgache','engagement citoyen Madagascar','société malgache','SAONTSY'],
+  alternates:{canonical:`${SITE_URL}/a-propos`},
+  openGraph:{title:'FINIDY Research Center — Recherche et engagement citoyen',description:'Un écosystème de recherche consacré au devenir de la société malgache et à la diffusion de connaissances scientifiques accessibles.',url:`${SITE_URL}/a-propos`,type:'website' as const,locale:'fr_MG'},
 }
+
+const missions=[
+  'Réaliser une étude périodique de la situation réelle de la société malgache en faisant appel aux chercheurs engagés dans sa restructuration.',
+  'Travailler avec les communautés malgaches pour produire des connaissances humanistes, sensibles aux défis du réel, fiables, rigoureuses et porteuses d’espoir.',
+  'Promouvoir un écosystème de recherche innovant, dynamique et collaboratif.',
+  'Diffuser des connaissances fiables et veiller à ce qu’elles soient accessibles bien au-delà de l’université.',
+  'Cultiver l’esprit critique et le devoir citoyen pour le bonheur de toutes et tous.',
+]
+const piliers=[
+  ['La Revue SAONTSY — Le Malgache dans tous ses états','Revue trimestrielle publiant les recherches des chercheurs associés au Centre, des universitaires travaillant sur le terrain malgache et des chercheurs du monde dont les travaux sont liés à Madagascar. Elle permet également de renforcer les liens avec les universités malgaches, notamment par son comité de lecture.','/revue'],
+  ['L’édition de livres et d’articles littéraires','À travers l’édition FINIDY, le Centre contribue à la dissémination des savoirs scientifiques et des œuvres littéraires afin d’entretenir le sens de la réalité comme l’imaginaire malgache. Il propose aussi des services de correction et d’expertise de documents scientifiques.','/editions'],
+  ['L’Université populaire et inclusive','Un espace de conférences, d’actions collectives et de sensibilisation destiné à cultiver l’esprit critique, la vigilance et l’engagement citoyen.','/universite-populaire'],
+  ['FINIDY Magazine','Un support mensuel d’étude et de décryptage qui joue un rôle d’observatoire de la réalité structurelle de la société malgache et accueille la parole des spécialistes des sciences humaines et sociales.','/magazine'],
+  ['FINIDY Média','Des podcasts, documentaires, conférences et webinaires scientifiques offrant aux chercheurs malgaches un espace pour instruire et éclairer la société.','/entretiens'],
+  ['Le colloque international','Un rendez-vous annuel qui renforce l’ancrage universitaire du Centre et permet un débat direct autour des enjeux structurels de la société malgache.','/colloques'],
+  ['La consultance','Un accompagnement destiné aux particuliers, chercheurs, associations, entreprises et organisations qui souhaitent comprendre la société malgache, concevoir une intervention ou en évaluer les effets en mobilisant les sciences humaines et sociales.','/consultance'],
+]
+
+export default function Page(){return <main><section className="border-b border-nihary-sable-fonce bg-nihary-gradient"><div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8"><span className="eyebrow">À propos</span><h1 className="mt-3 max-w-4xl text-4xl font-bold leading-tight sm:text-5xl">Un écosystème de recherche et d’engagement citoyen</h1><p className="mt-6 max-w-3xl text-lg leading-8 text-nihary-brun">FINIDY Research Center œuvre pour le devenir de la société malgache. Sa mission est de réconcilier conscience scientifique, bonheur de la Grande Île et rayonnement international de la société malgache grâce à des programmes de recherche et de dissémination scientifique aussi accessibles que possible.</p></div></section><div className="mx-auto max-w-5xl space-y-14 px-4 py-14 sm:px-6 lg:px-8"><section className="grid gap-8 lg:grid-cols-[.7fr_1.3fr]"><div><span className="eyebrow">Notre philosophie</span><h2 className="mt-2 text-3xl font-bold">Humaniser la construction collective</h2></div><div className="space-y-5 text-base leading-8 text-nihary-brun"><p>La société peut être construite de différentes manières. Mais seule une construction visant l’humanisation de tous ses membres peut assurer son bonheur et son bien-être.</p><p>Au cœur de notre entreprise se trouve l’être humain, fragile et vulnérable face aux crises de son environnement, mais résolu à prendre en main son destin collectif. Il a besoin d’un accompagnement rigoureux et soutenable.</p><p>FINIDY Research Center offre une tribune aux acteurs scientifiques qui s’efforcent de rendre intelligibles les enjeux de la restructuration de la société malgache.</p></div></section><section><span className="eyebrow">Notre mission</span><h2 className="mt-2 text-3xl font-bold">Produire, transmettre et engager</h2><ol className="mt-7 grid gap-4 md:grid-cols-2">{missions.map((mission,index)=><li key={mission} className="card flex gap-4 p-5"><span className="text-xl font-bold text-nihary-or">{index+1}</span><p className="text-sm leading-6 text-nihary-brun">{mission}</p></li>)}</ol></section><section><span className="eyebrow">Nos activités</span><h2 className="mt-2 text-3xl font-bold">Sept piliers, un projet commun</h2><p className="mt-4 max-w-3xl leading-7 text-nihary-brun">Spécialisé dans l’accompagnement de la restructuration de la société malgache, FINIDY Research Center développe une communauté dynamique articulée autour de sept piliers.</p><div className="mt-8 grid gap-5 md:grid-cols-2">{piliers.map(([title,text,href],index)=><article key={title} className="card p-6"><span className="text-xs font-bold text-nihary-or">0{index+1}</span><h3 className="mt-2 text-xl font-semibold">{title}</h3><p className="mt-3 text-sm leading-7 text-nihary-brun">{text}</p><Link href={href} className="mt-4 inline-block text-sm font-medium text-nihary-or hover:underline">Découvrir ce pilier</Link></article>)}</div></section><section className="rounded-xl bg-nihary-ambre-fonce p-8 text-white"><h2 className="text-2xl font-bold">Rejoindre FINIDY Research Center</h2><p className="mt-3 max-w-2xl leading-7 text-white/75">Chercheurs, auteurs, experts, organisations et citoyens peuvent contribuer aux travaux, publications et activités du Centre.</p><div className="mt-6 flex flex-wrap gap-3"><Link href="/auth/inscription" className="btn-primary">Créer un compte</Link><Link href="/contact" className="btn-outline !border-white/50 !text-white hover:!bg-white/10">Nous contacter</Link></div></section></div></main>}

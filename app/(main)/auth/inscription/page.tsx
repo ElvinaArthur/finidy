@@ -33,7 +33,7 @@ export default function InscriptionPage() {
     <div className="min-h-screen bg-nihary-sable flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Logo size="lg" />
+          <Link href="/" aria-label="Retour à l’accueil" className="inline-block"><Logo size="lg" /></Link>
           <p className="text-nihary-gris font-body mt-3">Rejoindre la communauté FINIDY Research Center</p>
         </div>
         <div className="card p-8">
@@ -51,9 +51,9 @@ export default function InscriptionPage() {
             </div>
             <div>
               <label className="block text-sm font-body font-medium text-nihary-brun mb-1">Mot de passe *</label>
-              <input type="password" className="input" required minLength={8} value={form.password}
+              <input type="password" className="input" required minLength={10} value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                placeholder="Minimum 8 caractères" />
+                placeholder="Minimum 10 caractères" />
             </div>
             <div>
               <label className="block text-sm font-body font-medium text-nihary-brun mb-1">Institution</label>
@@ -72,6 +72,7 @@ export default function InscriptionPage() {
             Déjà un compte ?{' '}
             <Link href="/auth/connexion" className="text-nihary-or hover:underline">Se connecter</Link>
           </p>
+          <Link href="/" className="mt-3 block text-center text-sm text-nihary-gris hover:text-nihary-or hover:underline">Retour à l’accueil</Link>
         </div>
       </div>
     </div>
