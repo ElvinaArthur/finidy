@@ -27,9 +27,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ['Playfair Display', 'Georgia', 'serif'],
-        body: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        display: ['Arial', 'Helvetica Neue', 'Helvetica', 'system-ui', 'sans-serif'],
+        body: ['Arial', 'Helvetica Neue', 'Helvetica', 'system-ui', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'monospace'],
       },
       fontSize: {
         'display-xl': ['3.5rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
