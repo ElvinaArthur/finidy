@@ -4,6 +4,13 @@ import PilierCard from "@/components/shared/PilierCard";
 import { PILIERS } from "@/lib/piliers";
 import { prisma } from "@/lib/prisma";
 
+export const metadata = {
+  title: "Recherche et engagement citoyen à Madagascar",
+  description: "FINIDY Research Center est un écosystème de recherche et d’engagement citoyen pour le devenir de la société malgache : revue SAONTSY, édition, université populaire, média, colloques et consultance.",
+};
+
+const HOME_PILIER_ORDER = ["revue", "editions", "universite-populaire", "magazine", "entretiens", "colloques", "consultance"];
+
 const PILIER_COUNT_LABELS: Record<string, string> = {
   revue: "articles publiés",
   consultance: "experts disponibles",
@@ -71,9 +78,7 @@ export default async function HomePage() {
         />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
           <div className="max-w-3xl">
-            <span className="eyebrow block mb-4">
-              Madagascar · Océan Indien · Afrique
-            </span>
+            <span className="eyebrow block mb-4">Recherche · Société malgache · Engagement citoyen</span>
             <h1
               className="font-display font-bold leading-tight mb-6 text-nihary-ambre-fonce"
               style={{
@@ -81,31 +86,32 @@ export default async function HomePage() {
                 letterSpacing: "-0.02em",
               }}
             >
-              La plateforme de référence en{" "}
-              <span className="text-nihary-or">
-                Sciences Humaines & Sociales
-              </span>
+              Comprendre la société malgache pour éclairer son devenir
             </h1>
             <p className="text-lg text-nihary-brun font-body leading-relaxed mb-8 max-w-2xl">
-              Nihary — <em>celui qui contemple</em> — réunit chercheurs, auteurs
-              et praticiens autour d'un écosystème scientifique complet : revue
-              peer-reviewed, magazine, consultance, édition, colloques et
-              formation.
+              FINIDY Research Center est un écosystème de recherche et d’engagement citoyen. Il réunit chercheurs, universitaires, communautés et organisations pour produire des connaissances rigoureuses, accessibles et porteuses d’espoir pour Madagascar.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link href="/revue" className="btn-primary text-base px-6 py-3">
-                Explorer la Revue
+                Découvrir la revue SAONTSY
               </Link>
               <Link
                 href="/auth/inscription"
                 className="btn-outline text-base px-6 py-3"
               >
-                Devenir auteur
+                Rejoindre FINIDY
               </Link>
             </div>
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-nihary-ambre-fonce via-nihary-or to-nihary-ambre-fonce" />
+      </section>
+
+      <section className="border-y border-nihary-sable-fonce bg-white/60">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[.8fr_1.2fr] lg:px-8">
+          <div><span className="eyebrow">Notre mission</span><h2 className="mt-2 text-3xl font-bold text-nihary-ambre-fonce">Science, bien-être et rayonnement</h2></div>
+          <div className="space-y-4 leading-7 text-nihary-brun"><p>Notre mission est de réconcilier conscience scientifique, bonheur de la Grande Île et rayonnement international de la société malgache grâce à des programmes de recherche et de dissémination scientifique aussi accessibles que possible.</p><p>Nous travaillons avec les communautés malgaches, cultivons l’esprit critique et offrons une tribune aux acteurs scientifiques qui rendent intelligibles les enjeux de la restructuration de la société.</p><Link href="/a-propos" className="inline-block text-sm font-medium text-nihary-or hover:underline">En savoir plus sur FINIDY Research Center</Link></div>
+        </div>
       </section>
 
       {/* ── CHIFFRES ── */}
@@ -148,14 +154,12 @@ export default async function HomePage() {
             Sept piliers, un projet commun
           </h2>
           <p className="text-nihary-gris font-body mt-2 max-w-xl">
-            De la recherche fondamentale à la vulgarisation, de la formation à
-            la consultance — Nihary couvre tout le cycle de la connaissance en
-            SHS.
+            Revue scientifique, édition, université populaire, magazine, média, colloque international et consultance : sept activités au service d’un même projet de société.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {PILIERS.map((p) => (
+          {[...PILIERS].sort((a,b)=>HOME_PILIER_ORDER.indexOf(a.id)-HOME_PILIER_ORDER.indexOf(b.id)).map((p) => (
             <PilierCard
               key={p.href}
               icon={p.icon}
@@ -172,14 +176,12 @@ export default async function HomePage() {
       {/* ── CTA SOUMETTRE ── */}
       <section className="bg-nihary-ambre-fonce border-t border-nihary-ambre/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 text-center">
-          <span className="eyebrow text-nihary-or">Rejoindre Nihary</span>
+          <span className="eyebrow text-nihary-or">Rejoindre FINIDY Research Center</span>
           <h2 className="font-display font-bold text-2xl md:text-3xl text-white mt-2 mb-4">
-            Vos travaux méritent d'être lus.
+            Faites vivre la recherche au service de la société malgache
           </h2>
           <p className="text-nihary-gris-clair font-body mb-8 max-w-xl mx-auto">
-            Soumettez un article, proposez un cours, présentez vos recherches —
-            Nihary est la tribune des chercheurs en SHS de Madagascar et de
-            l'Océan Indien.
+            Soumettez un article à la revue trimestrielle SAONTSY, proposez un cours, partagez une étude ou rejoignez notre réseau d’experts en sciences humaines et sociales.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Link href="/revue/soumettre" className="btn-primary">
